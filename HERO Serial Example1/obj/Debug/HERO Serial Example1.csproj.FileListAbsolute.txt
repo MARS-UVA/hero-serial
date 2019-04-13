@@ -1,0 +1,19 @@
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\bin\Debug\le\HERO Serial Example.exe
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\bin\Debug\be\HERO Serial Example.exe
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\bin\Debug\le\HERO Serial Example.pdb
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\bin\Debug\be\HERO Serial Example.pdb
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\bin\Debug\HERO Serial Example.exe
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\bin\Debug\HERO Serial Example.pdb
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\bin\Debug\le\HERO Serial Example.pe
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\bin\Debug\le\HERO Serial Example.pdbx
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\bin\Debug\be\HERO Serial Example.pe
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\bin\Debug\be\HERO Serial Example.pdbx
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\obj\Debug\HERO Serial Example1.csprojAssemblyReference.cache
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\obj\Debug\TinyCLR_DebugReferences.cache
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\obj\Debug\HERO Serial Example1.csproj.CoreCompileInputs.cache
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\obj\Debug\be\HERO Serial Example.pe
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\obj\Debug\be\HERO Serial Example.pdbx
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\obj\Debug\le\HERO Serial Example.pe
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\obj\Debug\le\HERO Serial Example.pdbx
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\obj\Debug\HERO Serial Example.exe
+C:\Users\hanzhi713\source\repos\HERO Serial Example1\HERO Serial Example1\obj\Debug\HERO Serial Example.pdb
