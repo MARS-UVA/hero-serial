@@ -15,6 +15,10 @@ namespace HERO_Serial
     {
         /** Serial object, this is constructed on the serial number. */
         static System.IO.Ports.SerialPort _uart;
+
+        static CTRE.Phoenix.Controller.GameController gamepad = new
+        CTRE.Phoenix.Controller.GameController(new CTRE.Phoenix.UsbHostDevice(0));
+
         /** Ring buffer holding the bytes to transmit. */
         static byte[] _tx = new byte[1024];
         static int _txIn = 0;
@@ -55,8 +59,7 @@ namespace HERO_Serial
             --_txCnt;
             return retval;
         }
-        /** entry point of the application */
-        public static void Main()
+        public void processBytes()
         {
             /* temporary array */
             byte[] scratch = new byte[1];
@@ -89,6 +92,28 @@ namespace HERO_Serial
                 }
                 /* wait a bit, keep the main loop time constant, this way you can add to this example (motor control for example). */
                 System.Threading.Thread.Sleep(10);
+            }
+        }
+        /** entry point of the application */
+        public static void Main()
+        {
+            //CTRE.Phoenix.MotorControl.CAN.TalonSRX[] myTalon = new CTRE.Phoenix.MotorControl.CAN.TalonSRX[4];
+            //myTalon[0] = 
+            CTRE.Phoenix.MotorControl.CAN.TalonSRX talon = new CTRE.Phoenix.MotorControl.CAN.TalonSRX(11);
+            while (true)
+            {
+                for(double i = 0; i < 25; i++)
+                {
+                    talon.Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, i / 100);
+                    CTRE.Phoenix.Watchdog.Feed();
+                    Thread.Sleep(50);
+                }
+                for (double i = 25; i > 0; i--)
+                {
+                    talon.Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, i / 100);
+                    CTRE.Phoenix.Watchdog.Feed();
+                    Thread.Sleep(50);
+                }
             }
         }
         /**
