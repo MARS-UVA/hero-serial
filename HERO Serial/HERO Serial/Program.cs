@@ -102,13 +102,13 @@ namespace HERO_Serial
             CTRE.Phoenix.MotorControl.CAN.TalonSRX talon = new CTRE.Phoenix.MotorControl.CAN.TalonSRX(11);
             while (true)
             {
-                for(double i = 0; i < 25; i++)
+                for(double i = 0; i < 50; i++)
                 {
                     talon.Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, i / 100);
                     CTRE.Phoenix.Watchdog.Feed();
                     Thread.Sleep(50);
                 }
-                for (double i = 25; i > 0; i--)
+                for (double i = 50; i > 0; i--)
                 {
                     talon.Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, i / 100);
                     CTRE.Phoenix.Watchdog.Feed();
