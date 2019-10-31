@@ -114,20 +114,21 @@ namespace HERO_Serial
         /** entry point of the application */
         public static void Main()
         {
-            var myGamepad = new CTRE.Phoenix.Controller.GameController(new CTRE.Phoenix.UsbHostDevice(0));
             var talon = new CTRE.Phoenix.MotorControl.CAN.TalonSRX[7];
-
-            // 16: bucket ladder
-            // 17: bucket ladder angle
-            int[] talonIdx = { 11, 12, 13, 14, 15, 16, 17 };
-            bool[] inverted = { false, false, true, true, false, false, false };
-            for (int i = 0; i < 7; i++)
             {
-                var t = new CTRE.Phoenix.MotorControl.CAN.TalonSRX(talonIdx[i]);
-                t.SetInverted(inverted[i]);
-                talon[i] = t;
+                // 16: bucket ladder
+                // 17: bucket ladder angle
+                int[] talonIdx = { 11, 12, 13, 14, 15, 16, 17 };
+                bool[] inverted = { true, true, false, false, false, false, false };
+                for (int i = 0; i < 7; i++)
+                {
+                    var t = new CTRE.Phoenix.MotorControl.CAN.TalonSRX(talonIdx[i]);
+                    t.SetInverted(inverted[i]);
+                    talon[i] = t;
+                }
             }
 
+            var myGamepad = new CTRE.Phoenix.Controller.GameController(new CTRE.Phoenix.UsbHostDevice(0));
             var temp = new CTRE.Phoenix.Controller.GameControllerValues();
             while (true)
             {
@@ -136,31 +137,44 @@ namespace HERO_Serial
                
                     /* print the axis value */
                     temp = myGamepad.GetAllValues(ref temp);
-                    talon[0].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, thresh(temp.axes[1], 0.1f));
-                    talon[1].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, thresh(temp.axes[1], 0.1f));
-
-                    talon[2].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, thresh(temp.axes[5], 0.1f));
-                    talon[3].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, thresh(temp.axes[5], 0.1f));
+                    float rX = temp.axes[2];
+                    float rY = temp.axes[5];
+                    talon[0].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, thresh(rY - rX, 0.1f));
+                    talon[1].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, thresh(rY - rX, 0.1f));
+                    talon[2].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, thresh(rY + rX, 0.1f));
+                    talon[3].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, thresh(rY + rX, 0.1f));
 
                     uint buttons = temp.btns;
-                    if ((buttons & 128) != 0)
+                    if ((buttons & 8) != 0) // Y
+                    {
+                        talon[4].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, 1.0f);
+                    }
+                    else if ((buttons & 2) != 0) // A
+                    {
+                        talon[4].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, -1.0f);
+                    }
+                    else
+                    {
+                        talon[4].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, 0.0f);
+                    }
+                    if ((buttons & 16) != 0) // LB
                     {
                         talon[5].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, 1.0f);
-                    } else if ((buttons & 64) != 0)
+                    }
+                    else if ((buttons & 32) != 0) // RB
                     {
                         talon[5].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, -1.0f);
-                    } else
+                    }
+                    else
                     {
                         talon[5].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, 0.0f);
                     }
-                    talon[4].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, thresh(temp.axes[0], 0.1f));
-                    talon[6].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, thresh(temp.axes[2], 0.1f));
-                    
+                    talon[6].Set(CTRE.Phoenix.MotorControl.ControlMode.PercentOutput, thresh(temp.axes[1], 0.1f));
+
                     Debug.Print("axis:" + ArrToString(temp.axes));
                     Debug.Print("buttons: " + temp.btns);
-                    Debug.Print("flags: " + temp.flagBits);
                     CTRE.Phoenix.Watchdog.Feed();
-                    Thread.Sleep(25);
+                    Thread.Sleep(10);
                 }
             }
         }
