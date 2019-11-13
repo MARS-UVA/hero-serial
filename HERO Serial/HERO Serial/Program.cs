@@ -27,8 +27,8 @@ namespace HERO_Serial
                     talons[i] = t;
                 }
             }
-            // Serial.readFromSerial(talon); // for serial control
-            Gamepad.handleXGamepad(talons); // for direct control
+            Serial.readFromSerial(talons); // for serial control
+            //Gamepad.handleXGamepad(talons); // for direct control
         }
     }
 }

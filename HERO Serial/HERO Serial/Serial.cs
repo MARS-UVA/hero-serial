@@ -1,8 +1,9 @@
-using System.Threading;
-using Microsoft.SPOT;
-using CTRE.Phoenix.MotorControl.CAN;
-using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix;
+using CTRE.Phoenix.MotorControl;
+using CTRE.Phoenix.MotorControl.CAN;
+using Microsoft.SPOT;
+using System.Threading;
+using System;
 
 namespace HERO_Serial
 {
@@ -10,51 +11,13 @@ namespace HERO_Serial
     {
         /** Serial object, this is constructed on the serial number. */
         static System.IO.Ports.SerialPort _uart;
-
-        /** Ring buffer holding the bytes to transmit. */
-        static byte[] _tx = new byte[1024];
-        static int _txIn = 0;
-        static int _txOut = 0;
-        static int _txCnt = 0;
-        /** Cache for reading out bytes in serial driver. */
-        static byte[] _rx = new byte[1024];
         /* initial message to send to the terminal */
         static byte[] _helloMsg = Utils.MakeByteArrayFromString("HERO_Serial - Start Typing and HERO will echo the letters back.\r\n");
-        /** @return the maximum number of bytes we can read*/
-        private static int CalcRemainingCap()
-        {
-            /* firs calc the remaining capacity in the ring buffer */
-            int rem = _tx.Length - _txCnt;
-            /* cap the return to the maximum capacity of the rx array */
-            if (rem > _rx.Length)
-                rem = _rx.Length;
-            return rem;
-        }
-        /** @param received byte to push into ring buffer */
-        private static void PushByte(byte datum)
-        {
-            _tx[_txIn] = datum;
-            if (++_txIn >= _tx.Length)
-                _txIn = 0;
-            ++_txCnt;
-        }
-        /** 
-         * Pop the oldest byte out of the ring buffer.
-         * Caller must ensure there is at least one byte to pop out by checking _txCnt.
-         * @return the oldest byte in buffer.
-         */
-        private static byte PopByte()
-        {
-            byte retval = _tx[_txOut];
-            if (++_txOut >= _tx.Length)
-                _txOut = 0;
-            --_txCnt;
-            return retval;
-        }
+    
         public static void readFromSerial(TalonSRX[] talons)
         {
             /* temporary array */
-            byte[] temp = new byte[1024];
+            byte[] temp = new byte[2048];
             int tempEnd = 0;
             /* open the UART, select the com port based on the desired gadgeteer port.
              *   This utilizes the CTRE.IO Library.
@@ -70,15 +33,14 @@ namespace HERO_Serial
                 /* read bytes out of uart */
                 if (_uart.BytesToRead > 0)
                 {
-                    int readCnt = _uart.Read(_rx, 0, CalcRemainingCap());
-                    for (int i = 0; i < readCnt; ++i)
-                    {
-                        temp[tempEnd++] = _rx[i];
-                    }
+                    int capacity = 2048 - tempEnd;
+                    // read 64 byte chuck at a time
+                    int readCnt = _uart.Read(temp, tempEnd, capacity > 64 ? 64 : 0);
+                    tempEnd += readCnt;
                 }
                 while (tempEnd > 2)
                 {
-                    bool flag = false;
+                    int flag = 0;
                     for (int i = 0; i < tempEnd - 2; i++)
                     {
                         if (temp[i] == 0xff && (temp[i + 1] & 0xC0) == 0xC0) // first two significant bits should be set to 1
@@ -89,49 +51,66 @@ namespace HERO_Serial
                             {
                                 processBytes(talons, temp, i, i + expected_len);
                                 // equivalent to temp = temp[i + expected_len:] in python
-                                for (int j = i; j < i + expected_len; j++)
-                                    temp[j - i] = temp[j];
                                 tempEnd -= i + expected_len;
-                                flag = true;
-                                break;
+                                Array.Copy(temp, i + expected_len, temp, 0, tempEnd);
+                                flag = 1;
                             }
-                            else
+                            else // not enough bytes, need to wait for incoming bytes
                             {
                                 // remove bytes already read
-                                for (int j = i; j < tempEnd; j++)
-                                {
-                                    temp[j - i] = temp[j];
-                                }
                                 tempEnd -= i;
+                                Array.Copy(temp, i, temp, 0, tempEnd);
+                                flag = 2;
                             }
+                            break;
                         }
                     }
-                    if (!flag)
+                    if (flag == 0)
                         tempEnd = 0;
+                    if (flag == 2)
+                        break;
                 }
-
-                //if (_uart.CanWrite && (_txCnt > 0))
-                //{
-                //    scratch[0] = PopByte();
-                //    _uart.Write(scratch, 0, 1);
-                //}
-                /* wait a bit, keep the main loop time constant, this way you can add to this example (motor control for example). */
                 Watchdog.Feed();
+                if (_uart.CanWrite)
+                {
+                    var data = new byte[talons.Length * 4];
+                    for (int i = 0; i < talons.Length; i++)
+                    {
+                        var bytes = BitConverter.GetBytes(talons[i].GetOutputCurrent());
+                        Array.Copy(bytes, 0, data, i * 4, 4);
+                    }
+                    var encoded = sendBytes(data);
+                    _uart.Write(encoded, 0, encoded.Length);
+                }
+                /* wait a bit, keep the main loop time constant, this way you can add to this example (motor control for example). */
                 Thread.Sleep(10);
             }
         }
-        public static void processBytes(TalonSRX[] talons, byte[] data, int start, int end)
+        public static byte[] sendBytes(byte[] data)
+        {
+            var encoded = new byte[data.Length + 3];
+            encoded[0] = 0xff;
+            encoded[1] = (byte)(data.Length | 192);
+            Array.Copy(data, 0, encoded, 2, data.Length);
+            encoded[encoded.Length - 1] = (byte)(sum(encoded, 0, encoded.Length - 1) % 256);
+            return encoded;
+        }
+        public static int sum(byte[] data, int start, int end)
         {
             int s = 0;
-            for (int i = start; i < end - 1; i++)
+            for (int i = start; i < end; i++)
                 s += data[i];
-
+            return s;
+        }
+        public static void processBytes(TalonSRX[] talons, byte[] data, int start, int end)
+        {
             string asd = "";
             for (int i = start; i < end; i++)
                 asd += data[i] + ",";
             Debug.Print(asd); // debug purposes
 
-            if (s % 256 == data[end - 1])
+            // excluding the checksum 
+            if (sum(data, start, end - 1) % 256 == data[end - 1])
             {
                 Debug.Print("Checksum is correct");
                 for (int i = start + 2; i < end - 1; i++) // traverse only the data bytes
