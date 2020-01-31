@@ -11,13 +11,12 @@ namespace HERO_Serial
     {
         /** Serial object, this is constructed on the serial number. */
         static System.IO.Ports.SerialPort _uart;
-        /* initial message to send to the terminal */
-        static byte[] _helloMsg = Utils.MakeByteArrayFromString("HERO_Serial - Start Typing and HERO will echo the letters back.\r\n");
     
         public static void readFromSerial(TalonSRX[] talons)
         {
             /* temporary array */
             byte[] temp = new byte[2048];
+            byte[] dataOut = new byte[talons.Length];
             int tempEnd = 0;
             /* open the UART, select the com port based on the desired gadgeteer port.
              *   This utilizes the CTRE.IO Library.
@@ -25,8 +24,7 @@ namespace HERO_Serial
              */
             _uart = new System.IO.Ports.SerialPort(CTRE.HERO.IO.Port1.UART, 115200);
             _uart.Open();
-            /* send a message to the terminal for the user to see */
-            _uart.Write(_helloMsg, 0, _helloMsg.Length);
+
             /* loop forever */
             while (true)
             {
@@ -73,13 +71,10 @@ namespace HERO_Serial
                 Watchdog.Feed();
                 if (_uart.CanWrite)
                 {
-                    var data = new byte[talons.Length * 4];
                     for (int i = 0; i < talons.Length; i++)
-                    {
-                        var bytes = BitConverter.GetBytes(talons[i].GetOutputCurrent());
-                        Array.Copy(bytes, 0, data, i * 4, 4);
-                    }
-                    var encoded = sendBytes(data);
+                        dataOut[i] = (byte)(talons[i].GetOutputCurrent() / 0.25);
+                    
+                    var encoded = sendBytes(dataOut);
                     _uart.Write(encoded, 0, encoded.Length);
                 }
                 /* wait a bit, keep the main loop time constant, this way you can add to this example (motor control for example). */
@@ -118,11 +113,11 @@ namespace HERO_Serial
                     float val = data[i];
                     val = (val - 100) / 100;
                     talons[i - start - 2].Set(ControlMode.PercentOutput, val);
+                    
                 }
             }
             else
                 Debug.Print("Checksum is incorrect");
         }
-        /** entry point of the application */
     }
 }
