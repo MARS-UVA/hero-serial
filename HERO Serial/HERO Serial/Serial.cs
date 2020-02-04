@@ -72,8 +72,10 @@ namespace HERO_Serial
                 if (_uart.CanWrite)
                 {
                     for (int i = 0; i < talons.Length; i++)
-                        dataOut[i] = (byte)(talons[i].GetOutputCurrent() / 0.25);
-                    
+                    {
+                        dataOut[i] = (byte)(talons[i].GetOutputCurrent() * 4);
+                        Debug.Print(dataOut[i] + "");
+                    }
                     var encoded = sendBytes(dataOut);
                     _uart.Write(encoded, 0, encoded.Length);
                 }
@@ -113,7 +115,6 @@ namespace HERO_Serial
                     float val = data[i];
                     val = (val - 100) / 100;
                     talons[i - start - 2].Set(ControlMode.PercentOutput, val);
-                    
                 }
             }
             else
