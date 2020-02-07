@@ -74,8 +74,12 @@ namespace HERO_Serial
                     for (int i = 0; i < talons.Length; i++)
                     {
                         dataOut[i] = (byte)(talons[i].GetOutputCurrent() * 4);
-                        Debug.Print(dataOut[i] + "");
                     }
+                    string ot = "";
+                    for (int i = 0; i < talons.Length; i++) {
+                        ot += dataOut[i] + " ";
+                    }
+                    Debug.Print(ot);
                     var encoded = sendBytes(dataOut);
                     _uart.Write(encoded, 0, encoded.Length);
                 }
