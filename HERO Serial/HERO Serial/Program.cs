@@ -11,10 +11,10 @@ namespace HERO_Serial
         static Program() {
             // 11-12: left motor
             // 13-14: right motor
-            // 15: deposit bin
-            // 16: bucket ladder
             // 17: (actuator) bucket ladder angle
             // 18: (actuator) unused on the old robot
+            // 16: bucket ladder
+            // 15: deposit bin
             int[] talonIdx = { 11, 12, 13, 14, 17, 18, 16, 15 };
             bool[] inverted = { true, true, false, false, false, false, false, false };
             for (int i = 0; i < talonIdx.Length; i++)
@@ -34,8 +34,15 @@ namespace HERO_Serial
             //    pigeon.GetAccelerometerAngles(vals);
             //    Debug.Print(Utils.ArrToString(vals) + " ");
             //}
-            Serial.readFromSerial(talons); // for serial control
-            //Gamepad.handleXGamepad(talons); // for direct control
+            var control = new Control(talons);
+            var serial = new Serial();
+            while (true)
+            {
+                serial.ReadFromSerial();
+                control.ReadAction(serial.decoded);
+                serial.SendBytes(control.GetMotorCurrent());
+            }
+            // control.HandleXGamepad(); // for direct control
         }
     }
 }
