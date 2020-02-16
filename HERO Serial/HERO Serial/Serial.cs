@@ -8,6 +8,7 @@ namespace HERO_Serial
         readonly byte[] temp = new byte[1];
         readonly RingBuffer rBuffer = new RingBuffer(1024);
 
+        // change it to normal array?
         public readonly RingBuffer decoded = new RingBuffer(1024);
 
         public Serial()
@@ -42,7 +43,7 @@ namespace HERO_Serial
                             for (int j = i; j < end - 1; j++) {
                                 sum += rBuffer[j];
                             }
-                            
+
                             // verify the checksum
                             if (sum == rBuffer[end - 1])
                             {

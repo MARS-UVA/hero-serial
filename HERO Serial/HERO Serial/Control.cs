@@ -12,9 +12,9 @@ namespace HERO_Serial
     {
         readonly TalonSRX[] talons;
         readonly byte[] current;
-        readonly byte[] temp = new byte[6 * 4];
-        readonly float[] linear_vel;
-        readonly float[] angular_vel;
+        readonly byte[] temp = new byte[4 * 3];
+        // linear x, linear y, angular z
+        readonly float[] twist = new float[3];
 
         public Control(TalonSRX[] talons)
         {
@@ -68,7 +68,7 @@ namespace HERO_Serial
         {
             while (decoded.size > 0)
             {
-                int count = decoded[0]; // length prefixed
+                int count = decoded[0] & 0x3F; // length prefixed
                 if (count == talons.Length) // direct motor output
                 {
                     for (int j = 0; j < count; j++)
@@ -78,17 +78,15 @@ namespace HERO_Serial
                         talons[j].Set(ControlMode.PercentOutput, val);
                     }
                 }
-                else if (count == 6 * 4)
+                else if (count == 3 * 4)
                 {
 
-                    for (int j = 0; j < 24; j += 4)
+                    for (int j = 0; j < 12; j += 4)
                         temp[j] = decoded[j + 1];
 
                     for (int j = 0; j < 3; j++)
-                        linear_vel[j] = BitConverter.ToSingle(temp, j * 4);
+                        twist[j] = BitConverter.ToSingle(temp, j * 4);
 
-                    for (int j = 0; j < 3; j++)
-                        angular_vel[j] = BitConverter.ToSingle(temp, (j + 3) * 4);
 
                     // TODO
                     // Convert linear vel and angular vel
@@ -96,14 +94,14 @@ namespace HERO_Serial
                 }
                 decoded.RemoveFront(count + 1); // remove count and data bytes
             }
+            Watchdog.Feed();
         }
 
         public byte[] GetMotorCurrent()
         {
             for (int i = 0; i < talons.Length; i++)
-            {
                 current[i] = (byte)(talons[i].GetOutputCurrent() * 4);
-            }
+            
             return current;
         }
     }

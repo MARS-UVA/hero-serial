@@ -1,5 +1,6 @@
 ﻿using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.Sensors;
+using System.Threading;
 
 namespace HERO_Serial
 {
@@ -41,8 +42,10 @@ namespace HERO_Serial
                 serial.ReadFromSerial();
                 control.ReadAction(serial.decoded);
                 serial.SendBytes(control.GetMotorCurrent());
+
+                Thread.Sleep(10);
             }
-            // control.HandleXGamepad(); // for direct control
+            //control.HandleXGamepad(); // for direct control
         }
     }
 }
