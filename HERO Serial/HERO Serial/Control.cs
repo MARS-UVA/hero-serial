@@ -24,8 +24,10 @@ namespace HERO_Serial
 
         public void HandleXGamepad()
         {
-            UsbHostDevice.GetInstance(0).SetSelectableXInputFilter(UsbHostDevice.SelectableXInputFilter.XInputDevices);
-            var myGamepad = new GameController(UsbHostDevice.GetInstance(0));
+            var instance = UsbHostDevice.GetInstance(0);
+            instance.SetSelectableXInputFilter(UsbHostDevice.SelectableXInputFilter.XInputDevices);
+
+            var myGamepad = new GameController(instance);
             var temp = new GameControllerValues();
             while (true)
             {
@@ -78,11 +80,11 @@ namespace HERO_Serial
                         talons[j].Set(ControlMode.PercentOutput, val);
                     }
                 }
-                else if (count == 3 * 4)
+                else if (count == 3 * 4) // if message length is 12 bytes (3 floats)
                 {
 
-                    for (int j = 0; j < 12; j += 4)
-                        temp[j] = decoded[j + 1];
+                    for (int j = 1; j < 13; j += 4)
+                        temp[j] = decoded[j];
 
                     for (int j = 0; j < 3; j++)
                         twist[j] = BitConverter.ToSingle(temp, j * 4);
@@ -91,6 +93,10 @@ namespace HERO_Serial
                     // TODO
                     // Convert linear vel and angular vel
                     // PID control
+
+                    // set arms and actuators to zero when in autonomy
+                    for (int j = 4; j < 8; j++)
+                        talons[j].Set(ControlMode.PercentOutput, 0.0f);
                 }
                 decoded.RemoveFront(count + 1); // remove count and data bytes
             }
