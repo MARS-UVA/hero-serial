@@ -3,6 +3,7 @@ using CTRE.Phoenix.Controller;
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.MotorControl.CAN;
 using Microsoft.SPOT;
+using Microsoft.SPOT.Hardware;
 using System;
 using System.Threading;
 
@@ -11,15 +12,20 @@ namespace HERO_Serial
     class Control
     {
         readonly TalonSRX[] talons;
-        readonly byte[] current;
+        
+        readonly byte[] dataOut;
         readonly byte[] temp = new byte[4 * 3];
         // linear x, linear y, angular z
         readonly float[] twist = new float[3];
+        // arm angle potentiometer
+        readonly AnalogInput pot1 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
+        // arm translation potentiometer
+        readonly AnalogInput pot2 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
 
         public Control(TalonSRX[] talons)
         {
             this.talons = talons;
-            current = new byte[talons.Length];
+            dataOut = new byte[talons.Length + 1];
         }
 
         public void HandleXGamepad()
@@ -58,7 +64,7 @@ namespace HERO_Serial
 
                     talons[7].Set(ControlMode.PercentOutput, depositBin);
 
-                    Watchdog.Feed();
+                    CTRE.Phoenix.Watchdog.Feed();
                     Thread.Sleep(10);
                     Debug.Print("axis:" + Utils.ArrToString(temp.axes));
                     Debug.Print("buttons: " + temp.btns);
@@ -100,15 +106,16 @@ namespace HERO_Serial
                 }
                 decoded.RemoveFront(count + 1); // remove count and data bytes
             }
-            Watchdog.Feed();
+            CTRE.Phoenix.Watchdog.Feed();
         }
 
         public byte[] GetMotorCurrent()
         {
             for (int i = 0; i < talons.Length; i++)
-                current[i] = (byte)(talons[i].GetOutputCurrent() * 4);
-            
-            return current;
+                dataOut[i] = (byte)(talons[i].GetOutputCurrent() * 4);
+            dataOut[talons.Length] = (byte)(pot1.Read() * 255);
+            dataOut[talons.Length] = (byte)(pot2.Read() * 255);
+            return dataOut;
         }
     }
 }
