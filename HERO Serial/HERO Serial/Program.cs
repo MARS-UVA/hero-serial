@@ -13,7 +13,7 @@ namespace HERO_Serial
             // 11-12: left motor
             // 13-14: right motor
             // 17: (actuator) bucket ladder angle
-            // 18: (actuator) unused on the old robot
+            // 18: (actuator) unused on the old robot, arm translation for the new robot
             // 16: bucket ladder
             // 15: deposit bin
             int[] talonIdx = { 11, 12, 13, 14, 17, 18, 16, 15 };

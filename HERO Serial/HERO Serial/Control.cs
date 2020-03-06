@@ -104,6 +104,33 @@ namespace HERO_Serial
                     for (int j = 4; j < 8; j++)
                         talons[j].Set(ControlMode.PercentOutput, 0.0f);
                 }
+                else if (count == 8) // message length is 8 bytes (2 floats) (arm angle and translation)
+                {
+                    for (int j = 1; j < 9; j += 4)
+                        temp[j] = decoded[j];
+
+                    float angleTarget = BitConverter.ToSingle(temp, 1);
+                    float translationTarget = BitConverter.ToSingle(temp, 5);
+
+                    // TODO convert pot voltages to a position
+                    float angleNow = (float)pot1.Read();
+                    float angleDiff = angleTarget - angleNow;
+                    while (System.Math.Abs(angleDiff) < 10)
+                    {
+                        talons[4].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff));
+                        angleNow = (float)pot1.Read();
+                        angleDiff = angleTarget - angleNow;
+                    }
+
+                    float translationNow = (float)pot2.Read();
+                    float translationDiff = translationTarget - translationNow;
+                    while (System.Math.Abs(translationDiff) < 10)
+                    {
+                        talons[5].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(translationNow / translationTarget)) * System.Math.Sign(translationDiff));
+                        translationNow = (float)pot2.Read();
+                        translationDiff = translationTarget - translationNow;
+                    }
+                }
                 decoded.RemoveFront(count + 1); // remove count and data bytes
             }
             CTRE.Phoenix.Watchdog.Feed();
