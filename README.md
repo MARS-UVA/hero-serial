@@ -1,6 +1,12 @@
 # hero-serial
 
-This repository contains the code base for the hero microcontroller. It is responsible for direct motor control and reading from various sensors. 
+This repository contains the code base for the Hero microcontroller. It is responsible for direct motor control and reading from various sensors. 
+
+Hero board's documentation: https://www.ctr-electronics.com/hro.html. Under the Tech Resources tab, you can find the Hero user guide and software documentation. 
+
+## Development Prerequisite
+
+You need to have the phenoix framework (available under the Tech Resources tab in the link above) and Visual Studio 2017 or newer (community edition is enough) installed.
 
 ## Serial Protocol Specification
 
