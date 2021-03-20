@@ -13,7 +13,7 @@ namespace HERO_Serial
     {
         readonly TalonSRX[] talons;
         
-        readonly byte[] dataOut;
+        public readonly byte[] dataOut;
         readonly byte[] temp = new byte[4 * 3];
         // linear x, linear y, angular z
         readonly float[] twist = new float[3];
@@ -21,6 +21,8 @@ namespace HERO_Serial
         readonly AnalogInput pot1 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
         // arm translation potentiometer
         readonly AnalogInput pot2 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
+        readonly int minAngle = 30;
+        readonly int maxAngle = 90;
 
         public Control(TalonSRX[] talons)
         {
@@ -143,6 +145,13 @@ namespace HERO_Serial
             dataOut[talons.Length] = (byte)(pot1.Read() * 255);
             dataOut[talons.Length] = (byte)(pot2.Read() * 255);
             return dataOut;
+        }
+
+        public byte[] GetPotValue()
+        {
+            double val = pot1.Read();
+            val = (maxAngle - minAngle) * val + minAngle;
+            return BitConverter.GetBytes((float)val);
         }
     }
 }

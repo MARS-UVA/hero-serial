@@ -1,5 +1,6 @@
 ﻿using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.Sensors;
+using Microsoft.SPOT;
 using System.Threading;
 
 namespace HERO_Serial
@@ -42,6 +43,8 @@ namespace HERO_Serial
                 serial.ReadFromSerial();
                 control.ReadAction(serial.decoded);
                 serial.SendBytes(control.GetMotorCurrent());
+                byte[] potValue = control.GetPotValue();
+                Debug.Print(System.BitConverter.ToSingle(potValue, 0).ToString());
 
                 Thread.Sleep(10);
             }
