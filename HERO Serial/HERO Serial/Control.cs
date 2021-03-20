@@ -23,11 +23,13 @@ namespace HERO_Serial
         readonly AnalogInput pot2 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
         readonly int minAngle = 30;
         readonly int maxAngle = 90;
+        readonly int minTrans = 1;
+        readonly int maxTrans = 10;
 
         public Control(TalonSRX[] talons)
         {
             this.talons = talons;
-            dataOut = new byte[talons.Length + 1];
+            dataOut = new byte[talons.Length + 8];
         }
 
         public void HandleXGamepad()
@@ -152,6 +154,29 @@ namespace HERO_Serial
             double val = pot1.Read();
             val = (maxAngle - minAngle) * val + minAngle;
             return BitConverter.GetBytes((float)val);
+        }
+
+        // get motor currents, arm angle, and arm translation and put into dataOut
+        public void GetStatus()
+        {
+            double val;
+            byte[] bytes;
+            // motor currents
+            for (int i = 0; i < talons.Length; i++)
+                dataOut[i] = (byte)(talons[i].GetOutputCurrent() * 4);
+            // arm angle
+            val = pot1.Read();
+            val = (maxAngle - minAngle) * val + minAngle; // convert to angle
+            bytes = BitConverter.GetBytes((float)val); // convert to byte array
+            for (int i = 0; i < bytes.Length; i++) // put in dataOut
+                dataOut[i + talons.Length] = bytes[i];
+            // arm translation
+            val = pot2.Read();
+            val = (maxTrans - minTrans) * val + minTrans; // convert to translation
+            //bytes = BitConverter.GetBytes((float)val); // convert to byte array
+            bytes = BitConverter.GetBytes((float)1.0); // dummy value bc no pot2 yet
+            for (int i = 0; i < bytes.Length; i++) // put in dataOut
+                dataOut[i + talons.Length + 4] = bytes[i];
         }
     }
 }

@@ -42,9 +42,10 @@ namespace HERO_Serial
             {
                 serial.ReadFromSerial();
                 control.ReadAction(serial.decoded);
-                serial.SendBytes(control.GetMotorCurrent());
-                byte[] potValue = control.GetPotValue();
-                Debug.Print(System.BitConverter.ToSingle(potValue, 0).ToString());
+                //serial.SendBytes(control.GetMotorCurrent());
+                control.GetStatus();
+                serial.SendBytes(control.dataOut);
+                //Debug.Print(System.BitConverter.ToSingle(potValue, 0).ToString());
 
                 Thread.Sleep(10);
             }
