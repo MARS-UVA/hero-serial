@@ -140,22 +140,6 @@ namespace HERO_Serial
             CTRE.Phoenix.Watchdog.Feed();
         }
 
-        public byte[] GetMotorCurrent()
-        {
-            for (int i = 0; i < talons.Length; i++)
-                dataOut[i] = (byte)(talons[i].GetOutputCurrent() * 4);
-            dataOut[talons.Length] = (byte)(pot1.Read() * 255);
-            dataOut[talons.Length] = (byte)(pot2.Read() * 255);
-            return dataOut;
-        }
-
-        public byte[] GetPotValue()
-        {
-            double val = pot1.Read();
-            val = (maxAngle - minAngle) * val + minAngle;
-            return BitConverter.GetBytes((float)val);
-        }
-
         // get motor currents, arm angle, and arm translation and put into dataOut
         public void GetStatus()
         {
