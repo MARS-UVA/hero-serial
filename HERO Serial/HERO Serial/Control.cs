@@ -76,29 +76,29 @@ namespace HERO_Serial
             }
         }
 
-        //changes the robot's motor output and arm angles to match target values specified by the laptop/jetson
+        //changes the robot's motor output and arm angles to match target values specified by the laptop/jetson, which are stored in a RingBuffer
         public void ReadAction(RingBuffer decoded)
         {
             while (decoded.size > 0)
             {
                 int count = decoded[0] & 0x3F; // length prefixed
-                if (count == talons.Length) // direct motor output
+                if (count == talons.Length) // if the message conveys direct motor output (1 value for each motor)
                 {
-                    for (int j = 0; j < count; j++)
+                    for (int j = 0; j < count; j++) //sets each motor's percent output accordingly
                     {
                         float val = decoded[j + 1];
                         val = (val - 100) / 100;
                         talons[j].Set(ControlMode.PercentOutput, val);
                     }
                 }
-                else if (count == 3 * 4) // if message length is 12 bytes (3 floats)
+                else if (count == 3 * 4) // if message length is 12 bytes (3 floats), we must update the linear and angular acc of the robot itself
                 {
 
-                    for (int j = 1; j < 13; j += 4)
+                    for (int j = 1; j < 13; j += 4) //is there a reason this goes from 1 to 12, not 0 through 12? what does this for loop do?
                         temp[j] = decoded[j];
 
                     for (int j = 0; j < 3; j++)
-                        twist[j] = BitConverter.ToSingle(temp, j * 4);
+                        twist[j] = BitConverter.ToSingle(temp, j * 4); //converts each value (linear acc x, linear acc y, angular acc z) into a float
 
 
                     // TODO
@@ -109,7 +109,7 @@ namespace HERO_Serial
                     for (int j = 4; j < 8; j++)
                         talons[j].Set(ControlMode.PercentOutput, 0.0f);
                 }
-                else if (count == 8) // message length is 8 bytes (2 floats) (arm angle and translation)
+                else if (count == 8) // if message length is 8 bytes (2 floats), we must update arm angle and translation
                 {
                     for (int j = 1; j < 9; j += 4)
                         temp[j] = decoded[j];
