@@ -76,6 +76,7 @@ namespace HERO_Serial
             }
         }
 
+        //changes the robot's motor output and arm angles to match target values specified by the laptop/jetson
         public void ReadAction(RingBuffer decoded)
         {
             while (decoded.size > 0)
