@@ -98,12 +98,43 @@ namespace HERO_Serial
                         temp[j] = decoded[j];
 
                     for (int j = 0; j < 3; j++)
-                        twist[j] = BitConverter.ToSingle(temp, j * 4); //converts each value (linear acc x, linear acc y, angular acc z) into a float. i'm not sure the indices here will work out
+                        twist[j] = BitConverter.ToSingle(temp, j * 4 + 1); //converts each value (linear acc x, linear acc y, angular acc z) into a float. +1 added to fix the indices
+
+                    // TODO:
+                    // Finish converting linear vel and angular vel
+                    // Finish PID control
+
+                    //find differences b/w current and target values:
+                    float currentLinearX= (float)pot1.Read(); //WHERE WE READ THE VALUE FROM WILL CHANGE --> TODO: figure out how to read pidgeon imu values
+                    float linearXDiff = twist[0] - currentLinearX; //twist 0 contains the target linear x acc
+
+                    float currentLinearY = (float)pot1.Read(); //TODO: figure out how to read pidgeon imu values
+                    float linearYDiff = twist[1] - currentLinearY; //twist 1 contains the target linear x acc
+
+                    float currentAngularAcc = (float)pot1.Read(); //TODO: figure out how to read pidgeon imu values
+                    float angularAccDiff = twist[2] - currentAngularAcc; //twist 2 contains the target linear x acc
 
 
-                    // TODO
-                    // Convert linear vel and angular vel
-                    // PID control
+                    //keep moving the motor in the correct direction until the angle difference is small enough
+                    while (System.Math.Abs(angleDiff) < 10) //shouldn't this be > 10? 
+                    {
+                        talons[4].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff)); //Math.Sign accounts for the direction, the Math.Max term sets the percent output magnitude with a minimun of 15%?
+                        angleNow = (float)pot1.Read();
+                        angleDiff = angleTarget - angleNow;
+                    }
+
+                    //keep moving the motor in the correct direction until the angle difference is small enough
+                    while (System.Math.Abs(translationDiff) < 10)
+                    {
+                        talons[5].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(translationNow / translationTarget)) * System.Math.Sign(translationDiff));
+                        translationNow = (float)pot2.Read();
+                        translationDiff = translationTarget - translationNow;
+                    }
+
+
+
+
+
 
                     // set arms and actuators to zero when in autonomy
                     for (int j = 4; j < 8; j++)
@@ -118,18 +149,22 @@ namespace HERO_Serial
                     float angleTarget = BitConverter.ToSingle(temp, 1);
                     float translationTarget = BitConverter.ToSingle(temp, 5);
 
-                    // TODO convert pot voltages to a position
+                    //find difference b/w current and target angle
                     float angleNow = (float)pot1.Read();
                     float angleDiff = angleTarget - angleNow;
-                    while (System.Math.Abs(angleDiff) < 10)
+
+                    //keep moving the motor in the correct direction until the angle difference is small enough
+                    while (System.Math.Abs(angleDiff) < 10) //shouldn't this be > 10? 
                     {
-                        talons[4].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff));
+                        talons[4].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff)); //Math.Sign accounts for the direction, the Math.Max term sets the percent output magnitude with a minimun of 15%?
                         angleNow = (float)pot1.Read();
                         angleDiff = angleTarget - angleNow;
                     }
 
+                    //find difference b/w current and target translation value
                     float translationNow = (float)pot2.Read();
                     float translationDiff = translationTarget - translationNow;
+                    //keep moving the motor in the correct direction until the angle difference is small enough
                     while (System.Math.Abs(translationDiff) < 10)
                     {
                         talons[5].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(translationNow / translationTarget)) * System.Math.Sign(translationDiff));
