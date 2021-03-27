@@ -114,26 +114,29 @@ namespace HERO_Serial
                     float currentAngularAcc = (float)pot1.Read(); //TODO: figure out how to read pidgeon imu values
                     float angularAccDiff = twist[2] - currentAngularAcc; //twist 2 contains the target linear x acc
 
+                    //keep moving the motor in the correct direction until the current accelerations match the target values (within a small uncertainty)"
 
-                    //keep moving the motor in the correct direction until the angle difference is small enough
-                    while (System.Math.Abs(angleDiff) < 10) //shouldn't this be > 10? 
+                    while (System.Math.Abs(linearXDiff) > 10)
                     {
+                        //TODO: figure out which motor(s) control(s) linear acceleration in x direction
                         talons[4].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff)); //Math.Sign accounts for the direction, the Math.Max term sets the percent output magnitude with a minimun of 15%?
-                        angleNow = (float)pot1.Read();
-                        angleDiff = angleTarget - angleNow;
+                        currentLinearX = (float)pot1.Read(); //TODO: update read in from pidgeon imu
+                        linearXDiff = twist[0] - currentLinearX;
                     }
-
-                    //keep moving the motor in the correct direction until the angle difference is small enough
-                    while (System.Math.Abs(translationDiff) < 10)
+                    while (System.Math.Abs(linearYDiff) > 10)
                     {
-                        talons[5].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(translationNow / translationTarget)) * System.Math.Sign(translationDiff));
-                        translationNow = (float)pot2.Read();
-                        translationDiff = translationTarget - translationNow;
+                        //TODO: figure out which motor(s) control(s) linear acceleration in y direction
+                        talons[4].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff)); //Math.Sign accounts for the direction, the Math.Max term sets the percent output magnitude with a minimun of 15%?
+                        currentLinearY = (float)pot1.Read(); //TODO: update read in from pidgeon imu
+                        linearYDiff = twist[1] - currentLinearY;
                     }
-
-
-
-
+                    while (System.Math.Abs(angularAccDiff) > 10)
+                    {
+                        //TODO: figure out which motor(s) control(s) linear acceleration in x direction
+                        talons[4].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff)); //Math.Sign accounts for the direction, the Math.Max term sets the percent output magnitude with a minimun of 15%?
+                        currentAngularAcc = (float)pot1.Read(); //TODO: update read in from pidgeon imu
+                        angularAccDiff = twist[2] - currentAngularAcc;
+                    }
 
 
                     // set arms and actuators to zero when in autonomy
