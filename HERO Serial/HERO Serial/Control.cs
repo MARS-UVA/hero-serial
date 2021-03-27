@@ -94,11 +94,11 @@ namespace HERO_Serial
                 else if (count == 3 * 4) // if message length is 12 bytes (3 floats), we must update the linear and angular acc of the robot itself
                 {
 
-                    for (int j = 1; j < 13; j += 4) //is there a reason this goes from 1 to 12, not 0 through 12? what does this for loop do?
+                    for (int j = 1; j < 13; j += 4) //stores the three values at indices 1, 5, and 9
                         temp[j] = decoded[j];
 
                     for (int j = 0; j < 3; j++)
-                        twist[j] = BitConverter.ToSingle(temp, j * 4); //converts each value (linear acc x, linear acc y, angular acc z) into a float
+                        twist[j] = BitConverter.ToSingle(temp, j * 4); //converts each value (linear acc x, linear acc y, angular acc z) into a float. i'm not sure the indices here will work out
 
 
                     // TODO
@@ -111,9 +111,10 @@ namespace HERO_Serial
                 }
                 else if (count == 8) // if message length is 8 bytes (2 floats), we must update arm angle and translation
                 {
-                    for (int j = 1; j < 9; j += 4)
+                    for (int j = 1; j < 9; j += 4) //stores two values in temp at indices 1 and 5
                         temp[j] = decoded[j];
 
+                    //retrieves the two stored values
                     float angleTarget = BitConverter.ToSingle(temp, 1);
                     float translationTarget = BitConverter.ToSingle(temp, 5);
 
