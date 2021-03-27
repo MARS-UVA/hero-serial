@@ -101,25 +101,29 @@ namespace HERO_Serial
                         twist[j] = BitConverter.ToSingle(temp, j * 4 + 1); //converts each value (linear acc x, linear acc y, angular acc z) into a float. +1 added to fix the indices
 
                     // TODO:
-                    // Finish converting linear vel and angular vel
-                    // Finish PID control
+                    // Adjust PID control to reflect pidgeon imu values and proper motors
 
                     //find differences b/w current and target values:
                     float currentLinearX= (float)pot1.Read(); //WHERE WE READ THE VALUE FROM WILL CHANGE --> TODO: figure out how to read pidgeon imu values
                     float linearXDiff = twist[0] - currentLinearX; //twist 0 contains the target linear x acc
 
                     float currentLinearY = (float)pot1.Read(); //TODO: figure out how to read pidgeon imu values
-                    float linearYDiff = twist[1] - currentLinearY; //twist 1 contains the target linear x acc
+                    float linearYDiff = twist[1] - currentLinearY; //twist 1 contains the target linear y acc
 
                     float currentAngularAcc = (float)pot1.Read(); //TODO: figure out how to read pidgeon imu values
-                    float angularAccDiff = twist[2] - currentAngularAcc; //twist 2 contains the target linear x acc
+                    float angularAccDiff = twist[2] - currentAngularAcc; //twist 2 contains the target angular acc
 
                     //keep moving the motor in the correct direction until the current accelerations match the target values (within a small uncertainty)"
 
                     while (System.Math.Abs(linearXDiff) > 10)
                     {
-                        //TODO: figure out which motor(s) control(s) linear acceleration in x direction
-                        talons[4].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff)); //Math.Sign accounts for the direction, the Math.Max term sets the percent output magnitude with a minimun of 15%?
+                        //talons 0 and 1 control left motor
+                        //talons 2 and 3 control right motor
+
+                        //send the robot forward:
+                        for (int ind = 0; ind < 4; ind++) {
+                        talons[ind].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff)); //Math.Sign accounts for the direction, the Math.Max term sets the percent output magnitude with a minimun of 15%?
+                        }
                         currentLinearX = (float)pot1.Read(); //TODO: update read in from pidgeon imu
                         linearXDiff = twist[0] - currentLinearX;
                     }
