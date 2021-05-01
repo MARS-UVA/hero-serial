@@ -1,4 +1,5 @@
 ﻿using CTRE.Phoenix.MotorControl.CAN;
+using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
 using Microsoft.SPOT;
 using System.Threading;
@@ -9,23 +10,29 @@ namespace HERO_Serial
     {
         static readonly TalonSRX[] talons = new TalonSRX[8];
         static readonly PigeonIMU pigeon;
-
+        
         static Program() {
-            // 11-12: left motor
-            // 13-14: right motor
-            // 17: (actuator) bucket ladder angle
-            // 18: (actuator) unused on the old robot, arm translation for the new robot
-            // 16: bucket ladder
-            // 15: deposit bin
-            int[] talonIdx = { 11, 12, 13, 14, 17, 18, 16, 15 };
+            // New IDS:
+            // 4-5: left wheels
+            // 6-7: right wheels
+            // 8: bucket ladder angle, two motors
+            // 9: bucket ladder translation
+            // 10: chain driver (not attached)
+            // 11: deposit bin angle, two motors
+            // 12: deposit bin gate (not attached)
+            int[] talonIdx = { 4, 5, 6, 7, 8, 9, 10, 11 };
             bool[] inverted = { true, true, false, false, false, false, false, false };
             for (int i = 0; i < talonIdx.Length; i++)
             {
                 var t = new TalonSRX(talonIdx[i]);
                 t.SetInverted(inverted[i]);
                 talons[i] = t;
+
+                // this is garbage
+                t.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0);
+                t.GetSelectedSensorVelocity(0);
             }
-            pigeon = new PigeonIMU(talons[3]);
+            pigeon = new PigeonIMU(talons[7]);
         }
 
         public static void Main()
@@ -38,16 +45,18 @@ namespace HERO_Serial
             //}
             var control = new Control(talons);
             var serial = new Serial();
+            
             while (true)
             {
-                serial.ReadFromSerial();
-                control.ReadAction(serial.decoded);
-                control.GetStatus();
-                serial.SendBytes(control.dataOut);
+                //serial.ReadFromSerial();
+                //control.ReadAction(serial.decoded);
+                //control.GetStatus();
+                //serial.SendBytes(control.dataOut);
 
-                Thread.Sleep(10);
+                control.HandleXGamepad(); // for direct control
+                Thread.Sleep(50);
             }
-            //control.HandleXGamepad(); // for direct control
+            
         }
     }
 }

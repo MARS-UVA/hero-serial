@@ -45,8 +45,8 @@ namespace HERO_Serial
                 {
                     /* print the axis value */
                     myGamepad.GetAllValues(ref temp);
-                    float rX = -temp.axes[2];
-                    float rY = -temp.axes[3];
+                    float rX = -temp.axes[0];
+                    float rY = -temp.axes[1];
 
                     // different from DirectInput
                     talons[0].Set(ControlMode.PercentOutput, Utils.thresh(rY + rX, 0.1f));
@@ -54,7 +54,8 @@ namespace HERO_Serial
                     talons[2].Set(ControlMode.PercentOutput, Utils.thresh(rY - rX, 0.1f));
                     talons[3].Set(ControlMode.PercentOutput, Utils.thresh(rY - rX, 0.1f));
 
-                    talons[4].Set(ControlMode.PercentOutput, Utils.thresh(temp.axes[1], 0.1f));
+                    talons[4].Set(ControlMode.PercentOutput, Utils.thresh(temp.axes[2], 0.1f));
+                    talons[5].Set(ControlMode.PercentOutput, Utils.thresh(temp.axes[3], 0.1f));
 
                     uint buttons = temp.btns;
                     float depositBin = 0.0f;
@@ -111,6 +112,12 @@ namespace HERO_Serial
                     //keep moving the motor in the correct direction until the current velocities match the target values (within a small uncertainty)
                     //using a magnitude and direction approach: the robot's heading is first updated, and then once it's  facing the right diretion, it travels with the target velocity
 
+                    // FIXME
+                    float angularAccDiff = 0.0f;
+                    float angleNow = 0.0f;
+                    float angleTarget = 0.0f;
+                    float linearXDiff = 0.0f;
+                    float angleDiff = 0.0f;
                     //update heading
                     while (System.Math.Abs(angularAccDiff) > 10)
                     {
@@ -123,8 +130,9 @@ namespace HERO_Serial
                         angularVelDiff = twist[2] - currentAngularVel;
                     }
                     //update translational motion
+                    
                     float currentLinearMag = (float)pot1.Read(); //gets a value for velocity from the pidgeon IMU (TODO)
-                    float targetLinearMag = Math.Sqrt(Math.Pow(twist[0], 2) + Math.Pow(twist[1], 2)); //magnitude of targe linear velocity (twist[0] is x component and twist[1] is y component)
+                    float targetLinearMag = 0.0f; // FIXME // CTRE.Phoenix.Math.Sqrt(Math.Pow(twist[0], 2) + Math.Pow(twist[1], 2)); //magnitude of targe linear velocity (twist[0] is x component and twist[1] is y component)
                     float linearDiff = targetLinearMag - currentLinearMag;
                     while (System.Math.Abs(linearXDiff) > 10)
                     {
