@@ -7,12 +7,12 @@ using System;
  * This is a wrapper class for the Logitech Wireless Gamepad controller. 
  * This is simply to give each button and axis its own function so things are more readable
  */
-class Gamepad
+class LogitechGamepad
 {
 
     private readonly GameController gamepad;
 
-    public Gamepad(uint usbIndex)
+    public LogitechGamepad(uint usbIndex)
     {
         // It would seem that UsbHostDevice and GameController are undocumented
         var instance = UsbHostDevice.GetInstance(usbIndex);
@@ -27,6 +27,14 @@ class Gamepad
     }
 
     // TODO: Check these are using the correct axis indecies
+    public float GetLeftTrigger()
+    {
+        return gamepad.GetAxis(4);
+    }
+    public float GetRightTrigger()
+    {
+        return gamepad.GetAxis(5);
+    }
     public float GetRightX()
     {
         return gamepad.GetAxis(0); 

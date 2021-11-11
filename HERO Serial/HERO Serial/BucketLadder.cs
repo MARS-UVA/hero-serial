@@ -2,6 +2,7 @@
 using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
+using HERO_Serial;
 
 /**
  * This is a class to represent the BucketLadder subsystem
@@ -29,7 +30,7 @@ public class BucketLadder
 
     }
 
-    public BucketLadder getInstance()
+    public static BucketLadder getInstance()
     {
         if (instance == null)
         {
@@ -37,5 +38,17 @@ public class BucketLadder
         }
 
         return instance;
+    }
+
+    // Gives a percent output to the extension motor
+    public void ExtendDirectControl(float power, float upperBound)
+    {
+        ladderExtender.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+    }
+
+    // Gives a percent output to the height control motor(s)
+    public void HeightDirectControl(float power, float upperBound)
+    {
+        ladderLifter.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
     }
 }

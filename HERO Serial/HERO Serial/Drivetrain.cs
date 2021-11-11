@@ -2,6 +2,7 @@
 using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
+using HERO_Serial;
 
 /**
  * This is a class to represent the Drivetrain subsystem
@@ -48,4 +49,13 @@ public class Drivetrain
 
 		return instance;
     }
+
+	// Percent Output drive mode. Takes a percent forwards (1 is max speed forwards, -1 max speed reverse)
+	// and a turn (1 is turn clockwise, -1 turn counter-clockwise)
+	// Designed such that controller input can be passed directly to this function
+	public void DirectDrive(float forward, float turn, float upperBound)
+    {
+		leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward + turn, upperBound));
+		rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward + turn, upperBound));
+	}
 }

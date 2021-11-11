@@ -35,8 +35,9 @@
   <ItemGroup>
     <Compile Include="BucketLadder.cs" />
     <Compile Include="Control.cs" />
+    <Compile Include="DepositSystem.cs" />
     <Compile Include="Drivetrain.cs" />
-    <Compile Include="Gamepad.cs" />
+    <Compile Include="LogitechGamepad.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Serial.cs" />

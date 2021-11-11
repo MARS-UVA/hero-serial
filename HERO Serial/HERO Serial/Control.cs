@@ -32,6 +32,47 @@ namespace HERO_Serial
             dataOut = new byte[talons.Length + 8];
         }
 
+        // CAUTION: UNTESTED
+        public void DirectUserControl()
+        {
+            var gamepad = new LogitechGamepad(0);
+
+            if (gamepad.IsConnected())
+            {
+                // Get drive input from the right stick
+                float driveForwards = gamepad.GetRightX();
+                float driveTurn = gamepad.GetRightY();
+
+                // Pass it to the drivetrain
+                Drivetrain.getInstance().DirectDrive(driveForwards, driveTurn, 0.1f);
+
+                // Get input for the bucket ladder
+                float bucketHeight = gamepad.GetLeftX();
+                float bucketExtension = gamepad.GetLeftY();
+
+                // Pass to the bucket ladder subsystem
+                BucketLadder.getInstance().HeightDirectControl(bucketHeight, 0.1f);
+                BucketLadder.getInstance().ExtendDirectControl(bucketExtension, 0.1f);
+
+                // Get input for the basket
+                // Y lifts the basket, X lowers it
+                var basketLift = 0f;
+                if (gamepad.YIsPressed())
+                {
+                    basketLift = 1f;
+                } else if(gamepad.XIsPressed())
+                {
+                    basketLift = -1f;
+                }
+
+                // Pass it to the Deposit subsytem
+                DepositSystem.getInstance().BasketLiftDirectControl(basketLift, 0.5f);
+
+                // Feed the watchdog so we don't timeout
+                CTRE.Phoenix.Watchdog.Feed();
+            }
+        }
+
         public void HandleXGamepad()
         {
             var instance = UsbHostDevice.GetInstance(0);
