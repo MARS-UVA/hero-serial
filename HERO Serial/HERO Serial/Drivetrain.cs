@@ -3,7 +3,11 @@ using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
 
-
+/**
+ * This is a class to represent the Drivetrain subsystem
+ * It conatins the motors controllers, their configurations, and functions to control them
+ * This is a singleton, and can be referenced anywhere
+ */
 public class Drivetrain
 { 
 	private static Drivetrain instance;
@@ -25,11 +29,14 @@ public class Drivetrain
 		rightLeader = new TalonSRX(6);
 		rightFollower = new TalonSRX(7);
 
+
 		// Set the followers to follow the leader
 		leftFollower.Follow(leftLeader);
 		rightFollower.Follow(rightLeader);
 
 		// TODO: Add settings, current limits, etc. 
+		leftLeader.SetInverted(true);
+
 
 	}
 

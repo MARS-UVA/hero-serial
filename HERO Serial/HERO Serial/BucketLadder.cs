@@ -3,6 +3,12 @@ using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
 
+/**
+ * This is a class to represent the BucketLadder subsystem
+ * This does NOT currently include the basket or conviour belt systems
+ * It conatins the motors controllers, their configurations, and functions to control them
+ * This is a singleton, and can be referenced anywhere
+ */
 public class BucketLadder
 {
     private static BucketLadder instance;
