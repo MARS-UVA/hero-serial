@@ -33,6 +33,7 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
+    <Compile Include="BucketLadder.cs" />
     <Compile Include="Control.cs" />
     <Compile Include="Drivetrain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

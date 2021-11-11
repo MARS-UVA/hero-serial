@@ -18,13 +18,18 @@ public class Drivetrain
 		// All the talons for the drivetrain live here
 		// Have an init, then several drive functions
 		// All the talons on one side will follow a leader talon
-
+		
+		// Initalize all the Talons
 		leftLeader = new TalonSRX(4);
 		leftFollower = new TalonSRX(5);
 		rightLeader = new TalonSRX(6);
 		rightFollower = new TalonSRX(7);
 
+		// Set the followers to follow the leader
+		leftFollower.Follow(leftLeader);
+		rightFollower.Follow(rightLeader);
 
+		// TODO: Add settings, current limits, etc. 
 
 	}
 
