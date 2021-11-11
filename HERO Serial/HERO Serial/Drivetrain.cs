@@ -56,6 +56,6 @@ public class Drivetrain
 	public void DirectDrive(float forward, float turn, float upperBound)
     {
 		leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward + turn, upperBound));
-		rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward + turn, upperBound));
+		rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward - turn, upperBound));
 	}
 }
