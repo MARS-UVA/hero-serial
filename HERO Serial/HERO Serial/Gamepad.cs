@@ -95,12 +95,12 @@ class Gamepad
         return gamepad.GetButton(0);
     }
     // TODO: Confirm what button index this is
-    public bool LeftTriggerIsPressed()
+    public bool LeftShoulderIsPressed()
     {
         return gamepad.GetButton(0);
     }
     // TODO: Confirm what button index this is
-    public bool RightTriggerIsPressed()
+    public bool RightShoulderIsPressed()
     {
         return gamepad.GetButton(0);
     }
