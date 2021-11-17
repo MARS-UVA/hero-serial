@@ -32,13 +32,14 @@ namespace HERO_Serial
             dataOut = new byte[talons.Length + 8];
         }
 
-        // CAUTION: UNTESTED
+        
         public void DirectUserControl()
         {
             var gamepad = new LogitechGamepad(0);
 
             if (gamepad.IsConnected())
             {
+                // CAUTION: UNTESTED
                 // Get drive input from the right stick
                 float driveForwards = gamepad.GetRightX();
                 float driveTurn = gamepad.GetRightY();
@@ -56,13 +57,19 @@ namespace HERO_Serial
 
                 // Get input for the basket
                 // Y lifts the basket, X lowers it
+                // This has been tested
                 var basketLift = 0f;
-                if (gamepad.YIsPressed())
+                if (gamepad.IsYPressed() && gamepad.IsAPressed())
                 {
-                    basketLift = 1f;
-                } else if(gamepad.XIsPressed())
+                    basketLift = 0f;
+                } 
+                else if (gamepad.IsYPressed())
                 {
                     basketLift = -1f;
+                } 
+                else if(gamepad.IsAPressed())
+                {
+                    basketLift = 1f;
                 }
 
                 // Pass it to the Deposit subsytem

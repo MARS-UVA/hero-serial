@@ -1,7 +1,6 @@
 using CTRE.Phoenix;
 using CTRE.Phoenix.Controller;
 using Microsoft.SPOT;
-using System;
 
 /**
  * This is a wrapper class for the Logitech Wireless Gamepad controller. 
@@ -21,6 +20,8 @@ class LogitechGamepad
         gamepad = new GameController(instance);
     }
 
+    
+
     public bool IsConnected()
     {
         return gamepad.GetConnectionStatus() == UsbDeviceConnection.Connected;
@@ -37,19 +38,19 @@ class LogitechGamepad
     }
     public float GetRightX()
     {
-        return gamepad.GetAxis(0); 
+        return gamepad.GetAxis(2); 
     }
     public float GetRightY()
     {
-        return gamepad.GetAxis(1);
+        return gamepad.GetAxis(3);
     }
     public float GetLeftX()
     {
-        return gamepad.GetAxis(2);
+        return gamepad.GetAxis(0);
     }
     public float GetLeftY()
     {
-        return gamepad.GetAxis(3);
+        return gamepad.GetAxis(1);
     }
 
     public float[] GetRightStick()
@@ -63,56 +64,63 @@ class LogitechGamepad
     }
 
     // TODO: Confirm what button index this is
-    public bool XIsPressed()
+    public bool IsXPressed()
     {
-        return gamepad.GetButton(0);
+        return gamepad.GetButton(3);
     }
     // TODO: Confirm what button index this is
-    public bool YIsPressed()
+    public bool IsYPressed()
     {
-        return gamepad.GetButton(5);
+        return gamepad.GetButton(4);
     }
     // TODO: Confirm what button index this is
-    public bool AIsPressed()
+    public bool IsAPressed()
     {
         return gamepad.GetButton(1);
     }
     // TODO: Confirm what button index this is
-    public bool BIsPressed()
+    public bool IsBPressed()
     {
-        return gamepad.GetButton(0);
+        return gamepad.GetButton(2);
+    }
+    
+    // TODO: Confirm what button index this is
+    public bool IsLeftShoulderPressed()
+    {
+        return gamepad.GetButton(5);
     }
     // TODO: Confirm what button index this is
-    public bool DPadNorthIsPressed()
+    public bool IsRightShoulderPressed()
     {
-        return gamepad.GetButton(0);
+        return gamepad.GetButton(6);
     }
-    // TODO: Confirm what button index this is
-    public bool DPadSouthIsPressed()
+
+    public bool IsBackPressed()
     {
-        return gamepad.GetButton(0);
+        return gamepad.GetButton(7);
     }
-    // TODO: Confirm what button index this is
-    public bool DPadWestIsPressed()
+
+    public bool IsStartPressed()
     {
-        return gamepad.GetButton(0);
+        return gamepad.GetButton(8);
     }
-    // TODO: Confirm what button index this is
-    public bool DPadEastIsPressed()
+
+    public bool IsLogitechButtonPressed()
     {
-        return gamepad.GetButton(0);
+        return gamepad.GetButton(11);
     }
-    // TODO: Confirm what button index this is
-    public bool LeftShoulderIsPressed()
+
+    public bool IsLeftStickPressed()  
     {
-        return gamepad.GetButton(0);
+        return gamepad.GetButton(9);
     }
-    // TODO: Confirm what button index this is
-    public bool RightShoulderIsPressed()
+
+    public bool IsRightStickPressed() 
     {
-        return gamepad.GetButton(0);
+        return gamepad.GetButton(10);
     }
 
 
+    
 }
 
