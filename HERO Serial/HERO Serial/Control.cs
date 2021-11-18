@@ -41,8 +41,8 @@ namespace HERO_Serial
             {
                 // CAUTION: UNTESTED
                 // Get drive input from the right stick
-                float driveForwards = gamepad.GetRightX();
-                float driveTurn = gamepad.GetRightY();
+                float driveForwards = gamepad.GetRightX() * 0.25f;
+                float driveTurn = gamepad.GetRightY() * 0.25f;
 
                 // Pass it to the drivetrain
                 Drivetrain.getInstance().DirectDrive(driveForwards, driveTurn, 0.1f);
