@@ -25,10 +25,10 @@ public class Drivetrain
 		// All the talons on one side will follow a leader talon
 		
 		// Initalize all the Talons
-		leftLeader = new TalonSRX(4);
-		leftFollower = new TalonSRX(5);
-		rightLeader = new TalonSRX(6);
-		rightFollower = new TalonSRX(7);
+		leftLeader = new TalonSRX(Constants.DRIVETRAIN_FRONT_LEFT_TALON_ID);
+		leftFollower = new TalonSRX(Constants.DRIVETRAIN_BACK_LEFT_TALON_ID);
+		rightLeader = new TalonSRX(Constants.DRIVETRAIN_FRONT_RIGHT_TALON_ID);
+		rightFollower = new TalonSRX(Constants.DRIVETRAIN_BACK_RIGHT_TALON_ID);
 
 
 		// Set the followers to follow the leader
