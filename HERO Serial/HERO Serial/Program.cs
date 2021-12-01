@@ -45,6 +45,8 @@ namespace HERO_Serial
             //}
             var control = new Control(talons);
             var serial = new Serial();
+
+            var gamepad = new LogitechGamepad(0);
             
             while (true)
             {
@@ -53,8 +55,19 @@ namespace HERO_Serial
                 //control.GetStatus();
                 //serial.SendBytes(control.dataOut);
 
-                control.HandleXGamepad(); // for direct control
-                Thread.Sleep(50);
+                //control.HandleXGamepad(); // for direct control
+
+                // This function has no loop. Relies on this loop periodically execute. 
+                // The old one had a while loop, so I'm not sure how it ever exited. 
+                control.DirectUserControl(); // New direct control function
+                
+                /*
+                 * Y - Raises the basket
+                 * A - Lowers the basket
+                 * Right stick should move the drivetrain
+                 */
+
+                Thread.Sleep(10);
             }
             
         }
