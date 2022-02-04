@@ -7,10 +7,10 @@ public static class Constants
     // All static
 
     // Drivetrain
-    public const int DRIVETRAIN_FRONT_LEFT_TALON_ID = 4;
-    public const int DRIVETRAIN_FRONT_RIGHT_TALON_ID = 6;
-    public const int DRIVETRAIN_BACK_LEFT_TALON_ID = 5;
-    public const int DRIVETRAIN_BACK_RIGHT_TALON_ID = 7;
+    public const int DRIVETRAIN_FRONT_LEFT_TALON_ID = 14;
+    public const int DRIVETRAIN_FRONT_RIGHT_TALON_ID = 0;
+    public const int DRIVETRAIN_BACK_LEFT_TALON_ID = 15;
+    public const int DRIVETRAIN_BACK_RIGHT_TALON_ID = 1;
 
     // Bucket ladder
     public const int BUCKETLADDER_LIFTER_TALON_ID = 8;
