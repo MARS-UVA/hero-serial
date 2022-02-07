@@ -154,6 +154,7 @@ namespace HERO_Serial
                 } else if (opcode == 1) // Direct Control
                 {
                     // remove all the data. Checksum should already have been removed
+                    Constants.CANIterator talonIterator = new Constants.CANIterator();
                     for (int i = 0; i < count; i++)
                     {
                         // ISSUE: EACH TALON'S OUTPUT IS STORES IN 1 BYTE
@@ -162,8 +163,8 @@ namespace HERO_Serial
                         // This is a foolish way to do this, 
                         // but it maintains modularity (I think)
                         float command = (float)decoded[i + 1];
-                        command = (command - 100) / 100; // from old code. Handles negatives
-                        Constants.CANIterator talonIterator = new Constants.CANIterator();
+                        command = (command - 100) / 100; // from old code. Handles negatives?
+                        
                         if (talonIterator.MoveNext()) // must be called before Current
                         {
                             Constants.CANID talon = (Constants.CANID)talonIterator.Current;
