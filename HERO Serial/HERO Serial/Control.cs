@@ -133,6 +133,38 @@ namespace HERO_Serial
         //changes the robot's motor output and arm angles to match target values specified by the laptop/jetson, which are stored in a RingBuffer
         public void ReadAction(RingBuffer decoded)
         {
+            // No loops here. This should be run from the main loop
+            if (decoded.size > 0)
+            {
+                // Get the subsystems
+                var drivetrain = Drivetrain.getInstance();
+                var bucketladder = BucketLadder.getInstance();
+                var deposit = DepositSystem.getInstance();
+
+                // Get important data
+                int opcode = (decoded[0] & 0xC0) >> 6; // Get the first two bits
+                int count = (decoded[0] & 0x3F); // Number of data bytes
+                // Opcode tells which mode of operation
+                if (opcode == 0) // STOP
+                {
+                    drivetrain.Stop();
+                    bucketladder.Stop();
+                    deposit.Stop();
+                } else if (opcode == 1) // Direct Control
+                {
+
+                }
+                else if (opcode == 2) // PID Control
+                {
+
+                }
+                else if (opcode == 3) // NOP
+                {
+
+                }
+            }
+
+            /* Keeping for reference. TODO: Remove once done
             while (decoded.size > 0)
             {
                 int count = decoded[0] & 0x3F; // length prefixed
@@ -239,6 +271,7 @@ namespace HERO_Serial
                 }
                 decoded.RemoveFront(count + 1); // remove count and data bytes
             }
+            */
             CTRE.Phoenix.Watchdog.Feed();
         }
 

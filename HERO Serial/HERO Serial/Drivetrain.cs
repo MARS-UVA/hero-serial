@@ -53,6 +53,15 @@ public class Drivetrain
 		return instance;
     }
 
+	// Quick function to stop all the motors
+	public void Stop()
+    {
+		DirectDrive(0.0f, 0.0f, 0.0f);
+		// I think this will disable those motors. May need to explicitly enabled
+		leftLeader.Set(ControlMode.Disabled, 0.0f);
+		rightLeader.Set(ControlMode.Disabled, 0.0f);
+	}
+
 	// Percent Output drive mode. Takes a percent forwards (1 is max speed forwards, -1 max speed reverse)
 	// and a turn (1 is turn clockwise, -1 turn counter-clockwise)
 	// Designed such that controller input can be passed directly to this function

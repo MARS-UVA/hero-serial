@@ -28,6 +28,14 @@ class DepositSystem
         return instance;
     }
 
+    // Quick function to stop all the motors
+    public void Stop()
+    {
+        BasketLiftDirectControl(0.0f, 0.0f);
+        // I think this will disable those motors. May need to explicitly enabled
+        basketLifter.Set(ControlMode.Disabled, 0.0f);
+    }
+
     public void BasketLiftDirectControl(float power, float upperBound)
     {
         basketLifter.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));

@@ -40,6 +40,17 @@ public class BucketLadder
         return instance;
     }
 
+    // Quick function to stop all the motors
+    public void Stop()
+    {
+        ExtendDirectControl(0.0f, 0.0f);
+        HeightDirectControl(0.0f, 0.0f);
+        // I think this will disable those motors. May need to explicitly enabled
+        ladderLifter.Set(ControlMode.Disabled, 0.0f);
+        ladderExtender.Set(ControlMode.Disabled, 0.0f);
+        chainDriver.Set(ControlMode.Disabled, 0.0f);
+    }
+
     // Gives a percent output to the extension motor
     public void ExtendDirectControl(float power, float upperBound)
     {
