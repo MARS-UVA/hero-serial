@@ -25,10 +25,10 @@ public class Drivetrain
 		// All the talons on one side will follow a leader talon
 		
 		// Initalize all the Talons
-		leftLeader = new TalonSRX(Constants.DRIVETRAIN_FRONT_LEFT_TALON_ID);
-		leftFollower = new TalonSRX(Constants.DRIVETRAIN_BACK_LEFT_TALON_ID);
-		rightLeader = new TalonSRX(Constants.DRIVETRAIN_FRONT_RIGHT_TALON_ID);
-		rightFollower = new TalonSRX(Constants.DRIVETRAIN_BACK_RIGHT_TALON_ID);
+		leftLeader = new TalonSRX((int)Constants.CANID.DRIVETRAIN_FRONT_LEFT_TALON_ID);
+		leftFollower = new TalonSRX((int)Constants.CANID.DRIVETRAIN_BACK_LEFT_TALON_ID);
+		rightLeader = new TalonSRX((int)Constants.CANID.DRIVETRAIN_FRONT_RIGHT_TALON_ID);
+		rightFollower = new TalonSRX((int)Constants.CANID.DRIVETRAIN_BACK_RIGHT_TALON_ID);
 
 
 		// Set the followers to follow the leader
@@ -53,6 +53,15 @@ public class Drivetrain
 		return instance;
     }
 
+	// Quick function to stop all the motors
+	public void Stop()
+    {
+		DirectDrive(0.0f, 0.0f, 0.0f);
+		// I think this will disable those motors. May need to explicitly enabled
+		leftLeader.Set(ControlMode.Disabled, 0.0f);
+		rightLeader.Set(ControlMode.Disabled, 0.0f);
+	}
+
 	// Percent Output drive mode. Takes a percent forwards (1 is max speed forwards, -1 max speed reverse)
 	// and a turn (1 is turn clockwise, -1 turn counter-clockwise)
 	// Designed such that controller input can be passed directly to this function
@@ -60,5 +69,15 @@ public class Drivetrain
     {
 		leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward + turn, upperBound));
 		rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward - turn, upperBound));
+	}
+
+	public void DirectDriveLeft(float power, float upperBound)
+    {
+		leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+    }
+
+	public void DirectDriveRight(float power, float upperBound)
+	{
+		rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
 	}
 }
