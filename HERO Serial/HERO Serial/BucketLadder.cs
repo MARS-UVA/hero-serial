@@ -62,4 +62,10 @@ public class BucketLadder
     {
         ladderLifter.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
     }
+
+    // Gives a percent output to the chain control motor(s)
+    public void ChainDirectControl(float power, float upperBound)
+    {
+        chainDriver.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+    }
 }

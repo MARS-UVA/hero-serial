@@ -70,4 +70,14 @@ public class Drivetrain
 		leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward + turn, upperBound));
 		rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward - turn, upperBound));
 	}
+
+	public void DirectDriveLeft(float power, float upperBound)
+    {
+		leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+    }
+
+	public void DirectDriveRight(float power, float upperBound)
+	{
+		rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+	}
 }

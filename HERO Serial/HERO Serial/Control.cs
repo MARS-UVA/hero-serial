@@ -167,31 +167,32 @@ namespace HERO_Serial
                         if (talonIterator.MoveNext()) // must be called before Current
                         {
                             Constants.CANID talon = (Constants.CANID)talonIterator.Current;
+                            float upperbound = 1.0f;
                             switch(talon)
                             {
                                 case Constants.CANID.DRIVETRAIN_FRONT_LEFT_TALON_ID:
-
+                                    drivetrain.DirectDriveLeft(command, upperbound); // Both front and left take the same power? 
                                     break;
                                 case Constants.CANID.DRIVETRAIN_FRONT_RIGHT_TALON_ID:
-
+                                    drivetrain.DirectDriveRight(command, upperbound);
                                     break;
                                 case Constants.CANID.DRIVETRAIN_BACK_LEFT_TALON_ID:
-
+                                    drivetrain.DirectDriveLeft(command, upperbound);
                                     break;
                                 case Constants.CANID.DRIVETRAIN_BACK_RIGHT_TALON_ID:
-
+                                    drivetrain.DirectDriveRight(command, upperbound);
                                     break;
                                 case Constants.CANID.BUCKETLADDER_LIFTER_TALON_ID:
-
+                                    bucketladder.HeightDirectControl(command, upperbound);
                                     break;
                                 case Constants.CANID.BUCKETLADDER_EXTENDER_TALON_ID:
-
+                                    bucketladder.ExtendDirectControl(command, upperbound);
                                     break;
                                 case Constants.CANID.BUCKETLADDER_CHAIN_DRIVER_TALON_ID:
-
+                                    bucketladder.ChainDirectControl(command, upperbound);
                                     break;
                                 case Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER_TALON_ID:
-
+                                    deposit.BasketLiftDirectControl(command, upperbound);
                                     break;
                                 default:
                                     // Do nothing
