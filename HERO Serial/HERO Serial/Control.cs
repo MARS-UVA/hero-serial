@@ -144,6 +144,7 @@ namespace HERO_Serial
                 // Get important data
                 int opcode = (decoded[0] & 0xC0) >> 6; // Get the first two bits
                 int count = (decoded[0] & 0x3F); // Number of data bytes
+
                 // Opcode tells which mode of operation
                 if (opcode == 0) // STOP
                 {
@@ -152,7 +153,54 @@ namespace HERO_Serial
                     deposit.Stop();
                 } else if (opcode == 1) // Direct Control
                 {
+                    // remove all the data. Checksum should already have been removed
+                    for (int i = 0; i < count; i++)
+                    {
+                        // ISSUE: EACH TALON'S OUTPUT IS STORES IN 1 BYTE
+                        // BUT A FLOAT IS 4 BYTES?
 
+                        // This is a foolish way to do this, 
+                        // but it maintains modularity (I think)
+                        float command = (float)decoded[i + 1];
+                        command = (command - 100) / 100; // from old code. Handles negatives
+                        Constants.CANIterator talonIterator = new Constants.CANIterator();
+                        if (talonIterator.MoveNext()) // must be called before Current
+                        {
+                            Constants.CANID talon = (Constants.CANID)talonIterator.Current;
+                            switch(talon)
+                            {
+                                case Constants.CANID.DRIVETRAIN_FRONT_LEFT_TALON_ID:
+
+                                    break;
+                                case Constants.CANID.DRIVETRAIN_FRONT_RIGHT_TALON_ID:
+
+                                    break;
+                                case Constants.CANID.DRIVETRAIN_BACK_LEFT_TALON_ID:
+
+                                    break;
+                                case Constants.CANID.DRIVETRAIN_BACK_RIGHT_TALON_ID:
+
+                                    break;
+                                case Constants.CANID.BUCKETLADDER_LIFTER_TALON_ID:
+
+                                    break;
+                                case Constants.CANID.BUCKETLADDER_EXTENDER_TALON_ID:
+
+                                    break;
+                                case Constants.CANID.BUCKETLADDER_CHAIN_DRIVER_TALON_ID:
+
+                                    break;
+                                case Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER_TALON_ID:
+
+                                    break;
+                                default:
+                                    // Do nothing
+                                    break;
+                            }
+
+                        }
+
+                    }
                 }
                 else if (opcode == 2) // PID Control
                 {
@@ -161,6 +209,10 @@ namespace HERO_Serial
                 else if (opcode == 3) // NOP
                 {
 
+                }
+                else // Should never run, but who knows
+                {
+                    Debug.Print("You've reached a fourth opcode. What have you done?!");
                 }
             }
 

@@ -15,7 +15,7 @@ class DepositSystem
 
     private DepositSystem()
     {
-        basketLifter = new TalonSRX(Constants.DEPOSITSYSTEM_BASKET_LIFTER_TALON_ID);
+        basketLifter = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER_TALON_ID);
     }
 
     public static DepositSystem getInstance()

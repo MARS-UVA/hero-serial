@@ -22,9 +22,9 @@ public class BucketLadder
     {
 
         // Initalize all the Talons
-        ladderLifter = new TalonSRX(Constants.BUCKETLADDER_LIFTER_TALON_ID); // This is wired to 2 different motors. Not sure if that's a good idea
-        ladderExtender = new TalonSRX(Constants.BUCKETLADDER_EXTENDER_TALON_ID);
-        chainDriver = new TalonSRX(Constants.BUCKETLADDER_CHAIN_DRIVER_TALON_ID);
+        ladderLifter = new TalonSRX((int)Constants.CANID.BUCKETLADDER_LIFTER_TALON_ID); // This is wired to 2 different motors. Not sure if that's a good idea
+        ladderExtender = new TalonSRX((int)Constants.CANID.BUCKETLADDER_EXTENDER_TALON_ID);
+        chainDriver = new TalonSRX((int)Constants.CANID.BUCKETLADDER_CHAIN_DRIVER_TALON_ID);
 
         // TODO: Add settings, current limits, etc
 
