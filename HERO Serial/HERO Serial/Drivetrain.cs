@@ -38,9 +38,8 @@ public class Drivetrain
 		// TODO: Add settings, current limits, etc. 
 		leftLeader.SetInverted(true);
 		leftFollower.SetInverted(true);
-		rightLeader.SetInverted(true);
-		rightFollower.SetInverted(true);
-
+		rightLeader.SetInverted(false);
+		rightFollower.SetInverted(false);
 
 	}
 

@@ -7,7 +7,7 @@ namespace HERO_Serial
     {
         public static float thresh(float a, float th)
         {
-            return Util.Abs(a) < th ? 0 : a;
+            return Util.Abs(a) < th ? a : th;
         }
         public static string ArrToString(float[] arr)
         {
