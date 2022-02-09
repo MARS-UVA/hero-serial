@@ -41,6 +41,10 @@ public class Drivetrain
 		rightLeader.SetInverted(false);
 		rightFollower.SetInverted(false);
 
+		// Put in brake mode
+		leftLeader.SetNeutralMode(NeutralMode.Brake);
+		leftLeader.SetNeutralMode(NeutralMode.Brake);
+
 	}
 
 	public static Drivetrain getInstance()
@@ -57,8 +61,8 @@ public class Drivetrain
     {
 		DirectDrive(0.0f, 0.0f, 0.0f);
 		// I think this will disable those motors. May need to explicitly enabled
-		leftLeader.Set(ControlMode.Disabled, 0.0f);
-		rightLeader.Set(ControlMode.Disabled, 0.0f);
+		leftLeader.Set(ControlMode.PercentOutput, 0.0f);
+		rightLeader.Set(ControlMode.PercentOutput, 0.0f);
 	}
 
 	// Percent Output drive mode. Takes a percent forwards (1 is max speed forwards, -1 max speed reverse)
