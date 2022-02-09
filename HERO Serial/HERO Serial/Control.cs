@@ -173,27 +173,35 @@ namespace HERO_Serial
                             {
                                 case Constants.CANID.DRIVETRAIN_FRONT_LEFT_TALON_ID:
                                     drivetrain.DirectDriveLeft(command, upperbound); // Both front and left take the same power? 
+                                    Debug.Print("Front left: " + command.ToString());
                                     break;
                                 case Constants.CANID.DRIVETRAIN_FRONT_RIGHT_TALON_ID:
                                     drivetrain.DirectDriveRight(command, upperbound);
+                                    Debug.Print("Front right: " + command.ToString());
                                     break;
                                 case Constants.CANID.DRIVETRAIN_BACK_LEFT_TALON_ID:
                                     drivetrain.DirectDriveLeft(command, upperbound);
+                                    Debug.Print("Back left: " + command.ToString());
                                     break;
                                 case Constants.CANID.DRIVETRAIN_BACK_RIGHT_TALON_ID:
                                     drivetrain.DirectDriveRight(command, upperbound);
+                                    Debug.Print("Back right: " + command.ToString());
                                     break;
                                 case Constants.CANID.BUCKETLADDER_LIFTER_TALON_ID:
                                     bucketladder.HeightDirectControl(command, upperbound);
+                                    Debug.Print("BL angle: " + command.ToString());
                                     break;
                                 case Constants.CANID.BUCKETLADDER_EXTENDER_TALON_ID:
                                     bucketladder.ExtendDirectControl(command, upperbound);
+                                    Debug.Print("BL trans: " + command.ToString());
                                     break;
                                 case Constants.CANID.BUCKETLADDER_CHAIN_DRIVER_TALON_ID:
                                     bucketladder.ChainDirectControl(command, upperbound);
+                                    Debug.Print("BL chain: " + command.ToString());
                                     break;
                                 case Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER_TALON_ID:
                                     deposit.BasketLiftDirectControl(command, upperbound);
+                                    Debug.Print("DB angle: " + command.ToString());
                                     break;
                                 default:
                                     // Do nothing
