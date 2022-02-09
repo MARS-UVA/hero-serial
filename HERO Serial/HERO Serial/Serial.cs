@@ -1,4 +1,5 @@
 using System;
+using Microsoft.SPOT;
 
 namespace HERO_Serial
 {
@@ -14,6 +15,8 @@ namespace HERO_Serial
         public Serial()
         {
             _uart.Open();
+            _uart.DiscardInBuffer();
+            _uart.DiscardOutBuffer();
         }
 
         public void ReadFromSerial()
@@ -23,6 +26,7 @@ namespace HERO_Serial
             {
                 _uart.Read(temp, 0, 1);
                 rBuffer.Add(temp[0]);
+                Debug.Print("reading " + temp[0].ToString());       //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             }
             while (rBuffer.size > 2)
             {
@@ -30,9 +34,10 @@ namespace HERO_Serial
                 for (int i = 0; i < rBuffer.size - 2; i++)
                 {
                     // check for header
-                    // first two significant bits of count should be set to 1
-                    if (rBuffer[i] == 0xff && (rBuffer[i + 1] & 0xC0) == 0xC0)
+                    // first two bits of count dont need to be 1 anymore!
+                    if (rBuffer[i] == 0xff)
                     {
+                        //Debug.Print("good header");                 //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         int count = rBuffer[i + 1] & 0x3F;
                         int expected_len = 3 + count; // header + count + checksum + payload_size
                         int end = expected_len + i;
@@ -47,6 +52,7 @@ namespace HERO_Serial
                             // verify the checksum
                             if (sum == rBuffer[end - 1])
                             {
+                                //Debug.Print("good checksum");       //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 // copy to decoded
                                 // strip header and checksum
                                 for (int j = i + 1; j < end - 1; j++)
