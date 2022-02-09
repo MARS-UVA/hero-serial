@@ -224,6 +224,8 @@ namespace HERO_Serial
                 {
                     Debug.Print("You've reached a fourth opcode. What have you done?!");
                 }
+
+                decoded.RemoveFront(count + 1); // remove count and data bytes
             }
 
             /* Keeping for reference. TODO: Remove once done
