@@ -157,9 +157,6 @@ namespace HERO_Serial
                     Constants.CANIterator talonIterator = new Constants.CANIterator();
                     for (int i = 0; i < count; i++)
                     {
-                        // ISSUE: EACH TALON'S OUTPUT IS STORES IN 1 BYTE
-                        // BUT A FLOAT IS 4 BYTES?
-
                         // This is a foolish way to do this, 
                         // but it maintains modularity (I think)
                         float command = (float)decoded[i + 1];
@@ -209,7 +206,7 @@ namespace HERO_Serial
                             }
 
                         }
-
+                        
                     }
                 }
                 else if (opcode == 2) // PID Control
@@ -225,6 +222,7 @@ namespace HERO_Serial
                     Debug.Print("You've reached a fourth opcode. What have you done?!");
                 }
 
+                // Removes this command from the ringbuffer
                 decoded.RemoveFront(count + 1); // remove count and data bytes
             }
 
