@@ -6,6 +6,12 @@ forward = 0x96  # 150
 back = 0x32     # 50
 stop = 0x64     # 100
 
+# w = forward
+# a = left
+# s = reverse
+# d = right
+# x = stop
+
 def on_press(key):
     try:
         if key.char == 'w':
@@ -68,6 +74,11 @@ def on_press(key):
             instruction.append(0x67)     # checksum, 1127%256 = 103
             ser.write(instruction)
             print('right')
+        elif key.char == 'x':
+            instruction = bytearray()
+            instruction.append(0xFF)    # header, 255
+            instruction.append(0x00)    # opcode + count: 00 000000, stop, 0 databytes, 0
+            instruction.append(0xFF)    # checksum, 255%256 = 255
     except AttributeError:
        pass
 
