@@ -164,39 +164,50 @@ namespace HERO_Serial
                         
                         if (talonIterator.MoveNext()) // must be called before Current
                         {
-                            Constants.CANID talon = (Constants.CANID)talonIterator.Current;
+                            /*
+                             * Order is:
+                             * drive front left
+                             * drive front right
+                             * drive back left
+                             * drive back right
+                             * bucket ladder
+                             * bucket extender
+                             * bucket chain driver
+                             * basket lifter
+                             * 
+                             */
                             float upperbound = 1.0f;
-                            switch(talon)
+                            switch(i)
                             {
-                                case Constants.CANID.DRIVETRAIN_FRONT_LEFT_TALON_ID:
+                                case 0:
                                     drivetrain.DirectDriveLeft(command, upperbound); // Both front and left take the same power? 
                                     Debug.Print("Front left: " + command.ToString());
                                     break;
-                                case Constants.CANID.DRIVETRAIN_FRONT_RIGHT_TALON_ID:
+                                case 1:
                                     drivetrain.DirectDriveRight(command, upperbound);
                                     Debug.Print("Front right: " + command.ToString());
                                     break;
-                                case Constants.CANID.DRIVETRAIN_BACK_LEFT_TALON_ID:
+                                case 2:
                                     drivetrain.DirectDriveLeft(command, upperbound);
                                     Debug.Print("Back left: " + command.ToString());
                                     break;
-                                case Constants.CANID.DRIVETRAIN_BACK_RIGHT_TALON_ID:
+                                case 3:
                                     drivetrain.DirectDriveRight(command, upperbound);
                                     Debug.Print("Back right: " + command.ToString());
                                     break;
-                                case Constants.CANID.BUCKETLADDER_LIFTER_TALON_ID:
+                                case 4:
                                     bucketladder.HeightDirectControl(command, upperbound);
                                     Debug.Print("BL angle: " + command.ToString());
                                     break;
-                                case Constants.CANID.BUCKETLADDER_EXTENDER_TALON_ID:
+                                case 5:
                                     bucketladder.ExtendDirectControl(command, upperbound);
                                     Debug.Print("BL trans: " + command.ToString());
                                     break;
-                                case Constants.CANID.BUCKETLADDER_CHAIN_DRIVER_TALON_ID:
+                                case 6:
                                     bucketladder.ChainDirectControl(command, upperbound);
                                     Debug.Print("BL chain: " + command.ToString());
                                     break;
-                                case Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER_TALON_ID:
+                                case 7:
                                     deposit.BasketLiftDirectControl(command, upperbound);
                                     Debug.Print("DB angle: " + command.ToString());
                                     break;

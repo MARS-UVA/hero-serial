@@ -27,7 +27,17 @@ Opcode | Value | Description
 10 | PID Control | Given target values, the Hero will adjust the motors to meet those targets
 11 | Reserved | Reserved for future use
 
-**databytes** consist of arbitrary bytes whose length is specified by the lower 6 bits of **count** . 
+**databytes** consist of arbitrary bytes whose length is specified by the lower 6 bits of **count** . These must be in the same order everytime. The order is as follows:
+<ol>
+	<li> Drive Front Left</li>
+	<li> Drive Front Right</li>
+	<li> Drive Back Left</li>
+	<li> Drive Back Right</li>
+	<li> Bucket Ladder</li>
+	<li> Bucket Extension</li>
+	<li> Bucket Chain Driver</li>
+	<li> Basket Lifter</li>
+</ol>
 
 **checksum** is the sum of all bytes before it modulo 256. 
 
