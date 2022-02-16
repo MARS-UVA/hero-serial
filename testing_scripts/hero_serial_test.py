@@ -18,10 +18,10 @@ def on_press(key):
             instruction = bytearray()
             instruction.append(0xFF)     # header, 255
             instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
-            instruction.append(forward)     # front right, 150
-            instruction.append(forward)     # back right, 150
             instruction.append(forward)     # front left, 150
+            instruction.append(forward)     # front right, 150
             instruction.append(forward)     # back left, 150
+            instruction.append(forward)     # back right, 150
             instruction.append(stop)     # bucket ladder angle, 100
             instruction.append(stop)     # bucket ladder translation, 100
             instruction.append(stop)     # bucket ladder chain driver, 100
@@ -33,10 +33,10 @@ def on_press(key):
             instruction = bytearray()
             instruction.append(0xFF)     # header, 255
             instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
-            instruction.append(forward)     # front right, 150
-            instruction.append(forward)     # back right, 150
             instruction.append(back)     # front left, 50
+            instruction.append(forward)     # front right, 150
             instruction.append(back)     # back left, 50
+            instruction.append(forward)     # back right, 150
             instruction.append(stop)     # bucket ladder angle, 100
             instruction.append(stop)     # bucket ladder translation, 100
             instruction.append(stop)     # bucket ladder chain driver, 100
@@ -48,10 +48,10 @@ def on_press(key):
             instruction = bytearray()
             instruction.append(0xFF)     # header, 255
             instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
-            instruction.append(back)     # front right, 50
-            instruction.append(back)     # back right, 50
             instruction.append(back)     # front left, 50
+            instruction.append(back)     # front right, 50
             instruction.append(back)     # back left, 50
+            instruction.append(back)     # back right, 50
             instruction.append(stop)     # bucket ladder angle, 100
             instruction.append(stop)     # bucket ladder translation, 100
             instruction.append(stop)     # bucket ladder chain driver, 100
@@ -63,10 +63,10 @@ def on_press(key):
             instruction = bytearray()
             instruction.append(0xFF)     # header, 255
             instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
-            instruction.append(back)     # front right, 50
-            instruction.append(back)     # back right, 50
             instruction.append(forward)     # front left, 150
+            instruction.append(back)     # front right, 50
             instruction.append(forward)     # back left, 150
+            instruction.append(back)     # back right, 50
             instruction.append(stop)     # bucket ladder angle, 100
             instruction.append(stop)     # bucket ladder translation, 100
             instruction.append(stop)     # bucket ladder chain driver, 100
@@ -74,24 +74,20 @@ def on_press(key):
             instruction.append(0x67)     # checksum, 1127%256 = 103
             ser.write(instruction)
             print('right')
-        elif key.char == 'x':
+        elif key.char == 'x':           # STOP command
             instruction = bytearray()
             instruction.append(0xFF)    # header, 255
             instruction.append(0x00)    # opcode + count: 00 000000, stop, 0 databytes, 0
             instruction.append(0xFF)    # checksum, 255%256 = 255
-    except AttributeError:
-       pass
-
-def on_release(key):
-    try:
-        if key.char == 'w' or key.char == 'a' or key.char == 's' or key.char == 'd':
+            print('STOP')
+        elif key.char == 'p':           # stop in the form of 0 driver
             instruction = bytearray()
             instruction.append(0xFF)     # header, 255
             instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
-            instruction.append(0x64)     # front right, 100
-            instruction.append(0x64)     # back right, 100
             instruction.append(0x64)     # front left, 100
+            instruction.append(0x64)     # front right, 100
             instruction.append(0x64)     # back left, 100
+            instruction.append(0x64)     # back right, 100
             instruction.append(0x64)     # bucket ladder angle, 100
             instruction.append(0x64)     # bucket ladder translation, 100
             instruction.append(0x64)     # bucket ladder chain driver, 100
@@ -100,9 +96,29 @@ def on_release(key):
             ser.write(instruction)
             print('stop')
     except AttributeError:
-        if key == keyboard.Key.esc:
-            # stop listener upon releasing escape key
-            return False
+       pass
+
+def on_release(key):
+    # try:
+    #     if key.char == 'w' or key.char == 'a' or key.char == 's' or key.char == 'd':
+    #         instruction = bytearray()
+    #         instruction.append(0xFF)     # header, 255
+    #         instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
+    #         instruction.append(0x64)     # front right, 100
+    #         instruction.append(0x64)     # back right, 100
+    #         instruction.append(0x64)     # front left, 100
+    #         instruction.append(0x64)     # back left, 100
+    #         instruction.append(0x64)     # bucket ladder angle, 100
+    #         instruction.append(0x64)     # bucket ladder translation, 100
+    #         instruction.append(0x64)     # bucket ladder chain driver, 100
+    #         instruction.append(0x64)     # deposit bin angle, 100
+    #         instruction.append(0x67)     # checksum, 1127%256 = 103
+    #         ser.write(instruction)
+    #         print('stop')
+    # except AttributeError:
+    if key == keyboard.Key.esc:
+        # stop listener upon releasing escape key
+        return False
 
 # configure serial port
 ser = serial.Serial(
