@@ -79,6 +79,7 @@ def on_press(key):
             instruction.append(0xFF)    # header, 255
             instruction.append(0x00)    # opcode + count: 00 000000, stop, 0 databytes, 0
             instruction.append(0xFF)    # checksum, 255%256 = 255
+            ser.write(instruction)
             print('STOP')
         elif key.char == 'p':           # stop in the form of 0 driver
             instruction = bytearray()
@@ -122,7 +123,7 @@ def on_release(key):
 
 # configure serial port
 ser = serial.Serial(
-    port = 'COM3',      # may need to change per computer
+    port = 'COM4',      # may need to change per computer
     baudrate = 115200,
     parity = serial.PARITY_NONE,
     stopbits = serial.STOPBITS_ONE,
