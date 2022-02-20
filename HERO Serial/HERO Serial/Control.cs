@@ -367,6 +367,12 @@ namespace HERO_Serial
             // motor currents
             for (int i = 0; i < talons.Length; i++)
                 dataOut[i] = (byte)(talons[i].GetOutputCurrent() * 4);
+            // NEW WAY:
+            // Should have 8 data bytes
+            Utils.CurrentEncodeArray(Drivetrain.getInstance().GetCurrents()).CopyTo(dataOut, 0);
+            Utils.CurrentEncodeArray(BucketLadder.getInstance().GetCurrents()).CopyTo(dataOut, 4);
+            Utils.CurrentEncodeArray(DepositSystem.getInstance().GetCurrents()).CopyTo(dataOut, 7);
+            // Keeping this...
             // arm angle
             val = pot1.Read();
             val = (maxAngle - minAngle) * val + minAngle; // convert to angle

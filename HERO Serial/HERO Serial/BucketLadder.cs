@@ -40,6 +40,16 @@ public class BucketLadder
         return instance;
     }
 
+    public float[] GetCurrents()
+    {
+        float[] currents = new float[3];
+        currents[0] = ladderLifter.GetOutputCurrent();
+        currents[1] = ladderExtender.GetOutputCurrent();
+        currents[2] = chainDriver.GetOutputCurrent();
+
+        return currents;
+    }
+
     // Quick function to stop all the motors
     public void Stop()
     {

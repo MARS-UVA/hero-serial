@@ -5,6 +5,19 @@ namespace HERO_Serial
 {
     class Utils
     {
+        public static byte CurrentEncode(float current)
+        {
+            return (byte)(current * 4); // equivalent to << 2
+        }
+        public static byte[] CurrentEncodeArray(float[] current)
+        {
+            byte[] output = new byte[current.Length];
+            for (int i = 0; i < output.Length; i++)
+            {
+                output[i] = CurrentEncode(current[i]);
+            }
+            return output; 
+        }
         public static float thresh(float a, float th)
         {
             return Util.Abs(a) < th ? a : th;

@@ -28,6 +28,14 @@ class DepositSystem
         return instance;
     }
 
+    public float[] GetCurrents()
+    {
+        float[] currents = new float[1];
+        currents[0] = basketLifter.GetOutputCurrent();
+
+        return currents;
+    }
+
     // Quick function to stop all the motors
     public void Stop()
     {

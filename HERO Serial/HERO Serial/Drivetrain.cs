@@ -56,6 +56,17 @@ public class Drivetrain
 		return instance;
     }
 
+	public float[] GetCurrents()
+    {
+		float[] currents = new float[4];
+		currents[0] = leftLeader.GetOutputCurrent();
+		currents[1] = leftFollower.GetOutputCurrent();
+		currents[2] = rightLeader.GetOutputCurrent();
+		currents[3] = rightFollower.GetOutputCurrent();
+
+		return currents;
+    }
+
 	// Quick function to stop all the motors
 	public void Stop()
     {
