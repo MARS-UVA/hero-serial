@@ -351,6 +351,17 @@ namespace HERO_Serial
         // get motor currents, arm angle, and arm translation and put into dataOut
         public void GetStatus()
         {
+            /*
+             * Here's how this works: 
+             * 1. Each talon's current is converted from a 4 byte float by taking the 
+             * last byte and left shifting it by 2. I think this would get the last 2 significant
+             * bits, but I'm not sure.
+             * 2. The angle and translation data is NOT encoded. Each 4 byte float is sent
+             * The ROS then looks at the last 8 bytes (2 4byte floats), interprets them as a struct 
+             * of 2 floats to get their values. Very clever and efficient, but not documented
+             * 3. These are put into the usual encoding with an opcode of b11 (3), which is reserved
+             * and sending with the same protocol as for sending motor commands. 
+             */
             double val;
             byte[] bytes;
             // motor currents
