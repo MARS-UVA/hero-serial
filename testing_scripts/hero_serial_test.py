@@ -7,6 +7,8 @@ forward = 0x7D  # 150 = 0x96, 125 = 7D
 back = 0x4B     # 50 = 0x32, 75 = 0x4B
 stop = 0x64     # 100 = 0x64
 
+EXIT = False
+
 # w = forward
 # a = left
 # s = reverse
@@ -108,41 +110,54 @@ def on_press(key):
        pass
 
 def on_release(key):
+    global EXIT
     if key == keyboard.Key.esc:
         EXIT = True;
         # stop listener upon releasing escape key
         return False
 
 class input_thread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
     def run(self):
+        global EXIT
         with keyboard.Listener(on_press = on_press, on_release = on_release) as listener:
             listener.join()
+
+class serial_thread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+    def run(self):
+        global EXIT
+        # keep executing until keyboard listener stops and EXIT is true
+        while not EXIT:
+            out = ''
+            while ser.inWaiting() > 0:
+                out += ser.read(1)
+            if out != '':
+                print('>>' + out)
+
+        # close serial port
+        ser.close()
 
 # START OF MAIN PROGRAM ------------------------------------------------------------------
 
 # configure serial port
 ser = serial.Serial(
-    port = 'COM1',      # need to change per computer
+    port = 'COM3',      # need to change per computer
     baudrate = 115200,
     parity = serial.PARITY_NONE,
     stopbits = serial.STOPBITS_ONE,
     bytesize = serial.EIGHTBITS
 )
 
-EXIT = False
 in_thread = input_thread()
+ser_thread = serial_thread()
+
 in_thread.start()
+ser_thread.start()
 
-# keep executing until keyboard listener stops and EXIT is true
-while not EXIT:
-    print(EXIT)
-    out = ''
-    while ser.inWaiting() > 0:
-        out += ser.read(1)
+in_thread.join()
+ser_thread.join()
 
-    if out != '':
-        print('>>' + out)
-
-# close serial port
-ser.close()
 exit()
