@@ -20,19 +20,19 @@ namespace HERO_Serial
             // 10: chain driver (not attached)
             // 11: deposit bin angle, two motors
             // 12: deposit bin gate (not attached)
-            int[] talonIdx = { 4, 5, 6, 7, 8, 9, 10, 11 };
-            bool[] inverted = { true, true, false, false, false, false, false, false };
-            for (int i = 0; i < talonIdx.Length; i++)
-            {
-                var t = new TalonSRX(talonIdx[i]);
-                t.SetInverted(inverted[i]);
-                talons[i] = t;
+            //int[] talonIdx = { 4, 5, 6, 7, 8, 9, 10, 11 };
+            //bool[] inverted = { true, true, false, false, false, false, false, false };
+            //for (int i = 0; i < talonIdx.Length; i++)
+            //{
+            //    var t = new TalonSRX(talonIdx[i]);
+            //    t.SetInverted(inverted[i]);
+            //    talons[i] = t;
 
-                // this is garbage
-                t.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0);
-                t.GetSelectedSensorVelocity(0);
-            }
-            pigeon = new PigeonIMU(talons[7]);
+            //     // this is garbage
+            //     t.ConfigSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0);
+            //     t.GetSelectedSensorVelocity(0);
+            // }
+            // pigeon = new PigeonIMU(talons[7]);
         }
 
         public static void Main()
@@ -43,7 +43,8 @@ namespace HERO_Serial
             //    pigeon.GetAccelerometerAngles(vals);
             //    Debug.Print(Utils.ArrToString(vals) + " ");
             //}
-            var control = new Control(talons);
+            //var control = new Control(talons);
+            var control = new Control();
             var serial = new Serial();
 
             var gamepad = new LogitechGamepad(0);

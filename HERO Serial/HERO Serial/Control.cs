@@ -26,10 +26,15 @@ namespace HERO_Serial
         readonly int minTrans = 1;
         readonly int maxTrans = 10;
 
-        public Control(TalonSRX[] talons)
+        //public Control(TalonSRX[] talons)
+        //{
+        //    this.talons = talons;
+        //    dataOut = new byte[talons.Length + 8];
+        //}
+
+        public Control()
         {
-            this.talons = talons;
-            dataOut = new byte[talons.Length + 8];
+            dataOut = new byte[8]; // TODO: this probably needs to be something else
         }
 
         
@@ -362,11 +367,11 @@ namespace HERO_Serial
              * 3. These are put into the usual encoding with an opcode of b11 (3), which is reserved
              * and sending with the same protocol as for sending motor commands. 
              */
-            double val;
+            //double val;
             byte[] bytes;
             // motor currents
-            for (int i = 0; i < talons.Length; i++)
-                dataOut[i] = (byte)(talons[i].GetOutputCurrent() * 4);
+            //for (int i = 0; i < talons.Length; i++)
+            //    dataOut[i] = (byte)(talons[i].GetOutputCurrent() * 4);
             // NEW WAY:
             // Should have 8 data bytes
             Utils.CurrentEncodeArray(Drivetrain.getInstance().GetCurrents()).CopyTo(dataOut, 0);
@@ -374,18 +379,18 @@ namespace HERO_Serial
             Utils.CurrentEncodeArray(DepositSystem.getInstance().GetCurrents()).CopyTo(dataOut, 7);
             // Keeping this...
             // arm angle
-            val = pot1.Read();
-            val = (maxAngle - minAngle) * val + minAngle; // convert to angle
-            bytes = BitConverter.GetBytes((float)val); // convert to byte array
-            for (int i = 0; i < bytes.Length; i++) // put in dataOut
-                dataOut[i + talons.Length] = bytes[i];
-            // arm translation
-            val = pot2.Read();
-            val = (maxTrans - minTrans) * val + minTrans; // convert to translation
+            //val = pot1.Read();
+            //val = (maxAngle - minAngle) * val + minAngle; // convert to angle
             //bytes = BitConverter.GetBytes((float)val); // convert to byte array
-            bytes = BitConverter.GetBytes((float)1.0); // dummy value bc no pot2 yet
-            for (int i = 0; i < bytes.Length; i++) // put in dataOut
-                dataOut[i + talons.Length + 4] = bytes[i];
+            //for (int i = 0; i < bytes.Length; i++) // put in dataOut
+            //    dataOut[i + talons.Length] = bytes[i];
+            // arm translation
+            //val = pot2.Read();
+            //val = (maxTrans - minTrans) * val + minTrans; // convert to translation
+            //bytes = BitConverter.GetBytes((float)val); // convert to byte array
+            //bytes = BitConverter.GetBytes((float)1.0); // dummy value bc no pot2 yet
+            //for (int i = 0; i < bytes.Length; i++) // put in dataOut
+            //    dataOut[i + talons.Length + 4] = bytes[i];
         }
     }
 }
