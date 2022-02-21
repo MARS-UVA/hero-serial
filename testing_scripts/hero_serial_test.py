@@ -1,5 +1,6 @@
 import serial   # pyserial
 from pynput import keyboard # pynput
+import threading
 import time
 
 forward = 0x7D  # 150 = 0x96, 125 = 7D
@@ -108,21 +109,39 @@ def on_press(key):
 
 def on_release(key):
     if key == keyboard.Key.esc:
+        EXIT = True;
         # stop listener upon releasing escape key
         return False
 
+class input_thread(threading.Thread):
+    def run(self):
+        with keyboard.Listener(on_press = on_press, on_release = on_release) as listener:
+            listener.join()
+
+# START OF MAIN PROGRAM ------------------------------------------------------------------
+
 # configure serial port
 ser = serial.Serial(
-    port = 'COM3',      # may need to change per computer
+    port = 'COM1',      # need to change per computer
     baudrate = 115200,
     parity = serial.PARITY_NONE,
     stopbits = serial.STOPBITS_ONE,
     bytesize = serial.EIGHTBITS
 )
 
-# start keyboard listener until released
-with keyboard.Listener(on_press = on_press, on_release = on_release) as listener:
-    listener.join()
+EXIT = False
+in_thread = input_thread()
+in_thread.start()
+
+# keep executing until keyboard listener stops and EXIT is true
+while not EXIT:
+    print(EXIT)
+    out = ''
+    while ser.inWaiting() > 0:
+        out += ser.read(1)
+
+    if out != '':
+        print('>>' + out)
 
 # close serial port
 ser.close()
