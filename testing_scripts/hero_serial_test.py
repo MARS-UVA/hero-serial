@@ -131,7 +131,6 @@ class serial_thread(threading.Thread):
         global EXIT
         # keep executing until keyboard listener stops and EXIT is true
         while not EXIT:
-            # out = ''
             while ser.inWaiting() > 0:
                 # wait for header byte and print it
                 in_b = ser.read(1)
@@ -150,12 +149,6 @@ class serial_thread(threading.Thread):
                     print(in_b.hex())
                     time.sleep(1)
                     ser.flushInput()
-
-            #     out = ser.read(1)
-            #     print(out.hex())
-            #     out += ser.read(1)
-            # if out != '':
-                # print(str(out))
 
         # close serial port
         ser.close()
