@@ -131,11 +131,13 @@ class serial_thread(threading.Thread):
         global EXIT
         # keep executing until keyboard listener stops and EXIT is true
         while not EXIT:
-            out = ''
+            # out = ''
             while ser.inWaiting() > 0:
-                out += ser.read(1)
-            if out != '':
-                print('>>' + out)
+                out = ser.read(1)
+                print(out.hex())
+            #     out += ser.read(1)
+            # if out != '':
+                # print(str(out))
 
         # close serial port
         ser.close()
