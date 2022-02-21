@@ -10,7 +10,8 @@ stop = 0x64     # 100 = 0x64
 # a = left
 # s = reverse
 # d = right
-# x = stop
+# p = stop
+# x = stopcode
 
 def on_press(key):
     try:
@@ -106,23 +107,6 @@ def on_press(key):
        pass
 
 def on_release(key):
-    # try:
-    #     if key.char == 'w' or key.char == 'a' or key.char == 's' or key.char == 'd':
-    #         instruction = bytearray()
-    #         instruction.append(0xFF)     # header, 255
-    #         instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
-    #         instruction.append(0x64)     # front right, 100
-    #         instruction.append(0x64)     # back right, 100
-    #         instruction.append(0x64)     # front left, 100
-    #         instruction.append(0x64)     # back left, 100
-    #         instruction.append(0x64)     # bucket ladder angle, 100
-    #         instruction.append(0x64)     # bucket ladder translation, 100
-    #         instruction.append(0x64)     # bucket ladder chain driver, 100
-    #         instruction.append(0x64)     # deposit bin angle, 100
-    #         instruction.append(0x67)     # checksum, 1127%256 = 103
-    #         ser.write(instruction)
-    #         print('stop')
-    # except AttributeError:
     if key == keyboard.Key.esc:
         # stop listener upon releasing escape key
         return False
