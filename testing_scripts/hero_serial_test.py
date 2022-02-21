@@ -133,8 +133,26 @@ class serial_thread(threading.Thread):
         while not EXIT:
             # out = ''
             while ser.inWaiting() > 0:
-                out = ser.read(1)
-                print(out.hex())
+                # wait for header byte and print it
+                in_b = ser.read(1)
+                if (int.from_bytes(in_b, "big") == 0xFF):
+                    print(in_b.hex())
+                    # get next byte, print it, extract count, ignore opcode for now
+                    in_b = ser.read(1)
+                    print(in_b.hex())
+                    count = int.from_bytes(in_b, "big") & 0x3F
+                    # get data bytes, print them
+                    for x in range(count):
+                        in_b = ser.read(1)
+                        print(in_b.hex())
+                    # get checksum, print it, no verification for now
+                    in_b = ser.read(1)
+                    print(in_b.hex())
+                    time.sleep(1)
+                    ser.flushInput()
+
+            #     out = ser.read(1)
+            #     print(out.hex())
             #     out += ser.read(1)
             # if out != '':
                 # print(str(out))
