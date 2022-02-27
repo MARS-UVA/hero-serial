@@ -16,6 +16,7 @@ public class Drivetrain
 	private readonly TalonSRX leftFollower;
 	private readonly TalonSRX rightLeader;
 	private readonly TalonSRX rightFollower;
+	private bool enable;
 
 	private Drivetrain()
 	{
@@ -44,6 +45,8 @@ public class Drivetrain
 		// Put in brake mode
 		leftLeader.SetNeutralMode(NeutralMode.Brake);
 		leftLeader.SetNeutralMode(NeutralMode.Brake);
+
+		enable = true;
 
 	}
 
@@ -74,6 +77,10 @@ public class Drivetrain
 		// I think this will disable those motors. May need to explicitly enabled
 		leftLeader.Set(ControlMode.PercentOutput, 0.0f);
 		rightLeader.Set(ControlMode.PercentOutput, 0.0f);
+		// Maybe does something? 
+		leftLeader.Set(ControlMode.Disabled, 0.0f);
+		leftLeader.Set(ControlMode.Disabled, 0.0f);
+		enable = false;
 	}
 
 	// Percent Output drive mode. Takes a percent forwards (1 is max speed forwards, -1 max speed reverse)
@@ -81,17 +88,26 @@ public class Drivetrain
 	// Designed such that controller input can be passed directly to this function
 	public void DirectDrive(float forward, float turn, float upperBound)
     {
-		leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward + turn, upperBound));
-		rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward - turn, upperBound));
+		DirectDriveLeft(forward + turn, upperBound);
+		DirectDriveRight(forward - turn, upperBound);
+		//leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward + turn, upperBound));
+		//rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward - turn, upperBound));
 	}
 
 	public void DirectDriveLeft(float power, float upperBound)
     {
-		leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+		if (enable) {
+			leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+		}
+		
     }
 
 	public void DirectDriveRight(float power, float upperBound)
 	{
-		rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+		if (enable)
+        {
+			rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+		}
+		
 	}
 }

@@ -16,6 +16,7 @@ public class BucketLadder
     private readonly TalonSRX ladderLifter;
     private readonly TalonSRX ladderExtender;
     private readonly TalonSRX chainDriver;
+    private bool enable;
 
 
     private BucketLadder()
@@ -27,6 +28,7 @@ public class BucketLadder
         chainDriver = new TalonSRX((int)Constants.CANID.BUCKETLADDER_CHAIN_DRIVER_TALON_ID);
 
         // TODO: Add settings, current limits, etc
+        enable = true;
 
     }
 
@@ -59,23 +61,38 @@ public class BucketLadder
         ladderLifter.Set(ControlMode.Disabled, 0.0f);
         ladderExtender.Set(ControlMode.Disabled, 0.0f);
         chainDriver.Set(ControlMode.Disabled, 0.0f);
+
+        enable = false;
     }
+
 
     // Gives a percent output to the extension motor
     public void ExtendDirectControl(float power, float upperBound)
     {
-        ladderExtender.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+        if (enable)
+        {
+            ladderExtender.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+        }
+        
     }
 
     // Gives a percent output to the height control motor(s)
     public void HeightDirectControl(float power, float upperBound)
     {
-        ladderLifter.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+        if (enable)
+        {
+            ladderLifter.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+        }
+        
     }
 
     // Gives a percent output to the chain control motor(s)
     public void ChainDirectControl(float power, float upperBound)
     {
-        chainDriver.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+        if (enable)
+        {
+            chainDriver.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+        }
+        
     }
 }
