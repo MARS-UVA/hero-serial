@@ -68,7 +68,7 @@ namespace HERO_Serial
                  * Right stick should move the drivetrain
                  */
 
-                Thread.Sleep(10);
+                //Thread.Sleep(10);
             }
             
         }
