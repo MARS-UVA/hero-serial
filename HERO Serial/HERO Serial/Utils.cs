@@ -20,7 +20,8 @@ namespace HERO_Serial
         }
         public static float thresh(float a, float th)
         {
-            return Util.Abs(a) < th ? a : th;
+
+            return Util.Abs(a) < th ? a : th * System.Math.Sign(a);
         }
         public static string ArrToString(float[] arr)
         {

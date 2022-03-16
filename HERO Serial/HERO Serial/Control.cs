@@ -164,9 +164,9 @@ namespace HERO_Serial
                     {
                         // This is a foolish way to do this, 
                         // but it maintains modularity (I think)
-                        float command = (float)decoded[i + 1];
-                        command = (command - 100) / 100; // from old code. Handles negatives?
-                        
+                        byte byteCommand = decoded[i + 1];
+                        float command = ((int)byteCommand - 100) / 100.0f; // from old code. Handles negatives?
+                        //Debug.Print("Command: " + command.ToString());
                         if (talonIterator.MoveNext()) // must be called before Current
                         {
                             /*
@@ -181,7 +181,7 @@ namespace HERO_Serial
                              * basket lifter
                              * 
                              */
-                            float upperbound = 0.3f;
+                            float upperbound = 1.0f;
                             switch(i)
                             {
                                 case 0:

@@ -53,8 +53,8 @@ namespace HERO_Serial
             {
                 serial.ReadFromSerial();
                 control.ReadAction(serial.decoded);
-                control.GetStatus();
-                serial.SendBytes(control.dataOut);
+                //control.GetStatus();
+                //serial.SendBytes(control.dataOut);
 
                 //control.HandleXGamepad(); // for direct control
 

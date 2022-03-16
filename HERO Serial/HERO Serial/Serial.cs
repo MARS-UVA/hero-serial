@@ -26,7 +26,7 @@ namespace HERO_Serial
             {
                 _uart.Read(temp, 0, 1);
                 rBuffer.Add(temp[0]);
-                Debug.Print("reading " + temp[0].ToString());       //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //Debug.Print("reading " + temp[0].ToString());       //  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             }
             while (rBuffer.size > 2)
             {
