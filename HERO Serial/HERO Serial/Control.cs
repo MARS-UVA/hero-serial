@@ -181,7 +181,7 @@ namespace HERO_Serial
                              * basket lifter
                              * 
                              */
-                            float upperbound = 1.0f;
+                            float upperbound = 0.3f;
                             switch(i)
                             {
                                 case 0:
