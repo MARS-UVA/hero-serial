@@ -12,12 +12,14 @@ using System;
 class DepositSystem
 {
     private static DepositSystem instance;
-    private readonly TalonSRX basketLifter;
+    private readonly TalonSRX basketLifter0;
+    private readonly TalonSRX basketLifter1;
     private bool enable;
 
     private DepositSystem()
     {
-        basketLifter = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER_TALON_ID);
+        basketLifter0 = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER0_TALON_ID);
+        basketLifter1 = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID);
         enable = true;
     }
 
@@ -33,8 +35,9 @@ class DepositSystem
 
     public float[] GetCurrents(PowerDistributionPanel pdp)
     {
-        float[] currents = new float[1];
-        currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER_TALON_ID);
+        float[] currents = new float[2];
+        currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER0_TALON_ID);
+        currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID);
         //currents[0] = basketLifter.GetOutputCurrent();
 
         return currents;
@@ -45,7 +48,9 @@ class DepositSystem
     {
         BasketLiftDirectControl(0.0f, 0.0f);
         // I think this will disable those motors. May need to explicitly enabled
-        basketLifter.Set(ControlMode.Disabled, 0.0f);
+        basketLifter0.Set(ControlMode.Disabled, 0.0f);
+        basketLifter1.Set(ControlMode.Disabled, 0.0f);
+
         enable = false;
     }
 
@@ -53,7 +58,8 @@ class DepositSystem
     {
         if (enable)
         {
-            basketLifter.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+            basketLifter0.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+            basketLifter1.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
         }
         
     }

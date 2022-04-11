@@ -3,6 +3,7 @@ using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
 using CTRE.Phoenix;
 using Microsoft.SPOT;
+using Microsoft.SPOT.Hardware;
 using System.Threading;
 
 namespace HERO_Serial
@@ -11,15 +12,14 @@ namespace HERO_Serial
     {
         static readonly TalonSRX[] talons = new TalonSRX[8];
         static readonly PigeonIMU pigeon;
-        
-        
+
         static Program() {
             // New IDS:
             // 4-5: left wheels
             // 6-7: right wheels
             // 8: bucket ladder angle, two motors
             // 9: bucket ladder translation
-            // 10: chain driver (not attached)
+            // 10: chain driver (not attached)?
             // 11: deposit bin angle, two motors
             // 12: deposit bin gate (not attached)
             //int[] talonIdx = { 4, 5, 6, 7, 8, 9, 10, 11 };
@@ -49,11 +49,8 @@ namespace HERO_Serial
             var control = new Control();
             var serial = new Serial();
 
-            PowerDistributionPanel pdp = new PowerDistributionPanel(62);
-            float[] wheelCurrents = new float[4];
-
             var gamepad = new LogitechGamepad(0);
-            
+
             while (true)
             {
                 serial.ReadFromSerial();

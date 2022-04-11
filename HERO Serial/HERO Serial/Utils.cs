@@ -9,14 +9,21 @@ namespace HERO_Serial
         {
             return (byte)(current * 4); // equivalent to << 2
         }
-        public static byte[] CurrentEncodeArray(float[] current)
+        public static byte[] EncodeFloatToByteArray(float[] current)
         {
-            byte[] output = new byte[current.Length];
-            for (int i = 0; i < output.Length; i++)
+            //byte[] output = new byte[current.Length];
+            //for (int i = 0; i < output.Length; i++)
+            //{
+            //    output[i] = CurrentEncode(current[i]);
+            //}
+            //return output; 
+
+            byte[] output = new byte[current.Length * 4];
+            for (int i = 0; i < current.Length; i++)
             {
-                output[i] = CurrentEncode(current[i]);
+                BitConverter.GetBytes(current[i]).CopyTo(output, i*4);
             }
-            return output; 
+            return output;
         }
         public static float thresh(float a, float th)
         {

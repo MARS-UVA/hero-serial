@@ -19,9 +19,9 @@ namespace HERO_Serial
         // linear x, linear y, angular z
         readonly float[] twist = new float[3];
         // arm angle potentiometer
-        readonly AnalogInput pot1 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
+        //readonly AnalogInput pot1 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
         // arm translation potentiometer
-        readonly AnalogInput pot2 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
+        //readonly AnalogInput pot2 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
         readonly int minAngle = 30;
         readonly int maxAngle = 90;
         readonly int minTrans = 1;
@@ -35,7 +35,13 @@ namespace HERO_Serial
 
         public Control()
         {
-            dataOut = new byte[8]; // TODO: this probably needs to be something else
+            // 4 drivetrain currents
+            // 4 bucket ladder currents
+            // 2 deposit bin currents
+            // 1 conveyor current
+            // 2 bucket ladder angles
+            // 13 floats - 52 bytes
+            dataOut = new byte[52]; // TODO: this probably needs to be something else
             pdp = new PowerDistributionPanel((int)Constants.CANID.PDP_ID);
         }
 
@@ -370,15 +376,22 @@ namespace HERO_Serial
              * and sending with the same protocol as for sending motor commands. 
              */
             //double val;
-            byte[] bytes;
+            //byte[] bytes;
             // motor currents
             //for (int i = 0; i < talons.Length; i++)
             //    dataOut[i] = (byte)(talons[i].GetOutputCurrent() * 4);
             // NEW WAY:
-            // Should have 8 data bytes
-            Utils.CurrentEncodeArray(Drivetrain.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 0);
-            Utils.CurrentEncodeArray(BucketLadder.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 4);
-            Utils.CurrentEncodeArray(DepositSystem.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 7);
+            // 4 drivetrain currents
+            // 4 bucket ladder currents
+            // 2 deposit bin currents
+            // 1 conveyor current
+            // 2 bucket ladder angles
+            // 13 floats - 52 bytes
+            Utils.EncodeFloatToByteArray(Drivetrain.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 0);
+            Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 16);
+            Utils.EncodeFloatToByteArray(DepositSystem.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 32);
+            // Conveyor here .CopyTo(dataOut, 40);
+            Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetAngles()).CopyTo(dataOut, 44);
             // Keeping this...
             // arm angle
             //val = pot1.Read();
