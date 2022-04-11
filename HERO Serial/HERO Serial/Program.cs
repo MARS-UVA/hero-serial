@@ -1,6 +1,7 @@
 ﻿using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
+using CTRE.Phoenix;
 using Microsoft.SPOT;
 using System.Threading;
 
@@ -10,6 +11,7 @@ namespace HERO_Serial
     {
         static readonly TalonSRX[] talons = new TalonSRX[8];
         static readonly PigeonIMU pigeon;
+        
         
         static Program() {
             // New IDS:
@@ -47,21 +49,24 @@ namespace HERO_Serial
             var control = new Control();
             var serial = new Serial();
 
+            PowerDistributionPanel pdp = new PowerDistributionPanel(62);
+            float[] wheelCurrents = new float[4];
+
             var gamepad = new LogitechGamepad(0);
             
             while (true)
             {
                 serial.ReadFromSerial();
                 control.ReadAction(serial.decoded);
-                //control.GetStatus();
-                //serial.SendBytes(control.dataOut);
+                control.GetStatus();
+                serial.SendBytes(control.dataOut);
 
                 //control.HandleXGamepad(); // for direct control
 
                 // This function has no loop. Relies on this loop periodically execute. 
                 // The old one had a while loop, so I'm not sure how it ever exited. 
                 control.DirectUserControl(); // New direct control function
-                
+
                 /*
                  * Y - Raises the basket
                  * A - Lowers the basket

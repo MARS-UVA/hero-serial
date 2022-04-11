@@ -2,6 +2,7 @@
 using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
+using CTRE.Phoenix;
 using HERO_Serial;
 
 /**
@@ -59,13 +60,17 @@ public class Drivetrain
 		return instance;
     }
 
-	public float[] GetCurrents()
+	public float[] GetCurrents(PowerDistributionPanel pdp)
     {
 		float[] currents = new float[4];
-		currents[0] = leftLeader.GetOutputCurrent();
-		currents[1] = leftFollower.GetOutputCurrent();
-		currents[2] = rightLeader.GetOutputCurrent();
-		currents[3] = rightFollower.GetOutputCurrent();
+		currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_FRONT_LEFT_TALON_ID);
+		currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_BACK_LEFT_TALON_ID);
+		currents[2] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_FRONT_RIGHT_TALON_ID);
+		currents[3] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_BACK_RIGHT_TALON_ID);
+		//currents[0] = leftLeader.GetOutputCurrent();
+		//currents[1] = leftFollower.GetOutputCurrent();
+		//currents[2] = rightLeader.GetOutputCurrent();
+		//currents[3] = rightFollower.GetOutputCurrent();
 
 		return currents;
     }

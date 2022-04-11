@@ -2,6 +2,7 @@
 using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
+using CTRE.Phoenix;
 using HERO_Serial;
 
 /**
@@ -42,12 +43,15 @@ public class BucketLadder
         return instance;
     }
 
-    public float[] GetCurrents()
+    public float[] GetCurrents(PowerDistributionPanel pdp)
     {
         float[] currents = new float[3];
-        currents[0] = ladderLifter.GetOutputCurrent();
-        currents[1] = ladderExtender.GetOutputCurrent();
-        currents[2] = chainDriver.GetOutputCurrent();
+        currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_LIFTER_TALON_ID);
+        currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_EXTENDER_TALON_ID);
+        currents[2] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_CHAIN_DRIVER_TALON_ID);
+        //currents[0] = ladderLifter.GetOutputCurrent();
+        //currents[1] = ladderExtender.GetOutputCurrent();
+        //currents[2] = chainDriver.GetOutputCurrent();
 
         return currents;
     }

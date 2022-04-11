@@ -1,6 +1,7 @@
 using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.MotorControl;
 using HERO_Serial;
+using CTRE.Phoenix;
 using System;
 
 /**
@@ -30,10 +31,11 @@ class DepositSystem
         return instance;
     }
 
-    public float[] GetCurrents()
+    public float[] GetCurrents(PowerDistributionPanel pdp)
     {
         float[] currents = new float[1];
-        currents[0] = basketLifter.GetOutputCurrent();
+        currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER_TALON_ID);
+        //currents[0] = basketLifter.GetOutputCurrent();
 
         return currents;
     }

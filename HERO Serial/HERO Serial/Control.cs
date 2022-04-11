@@ -12,6 +12,7 @@ namespace HERO_Serial
     class Control
     {
         readonly TalonSRX[] talons;
+        readonly PowerDistributionPanel pdp;
         
         public readonly byte[] dataOut;
         readonly byte[] temp = new byte[4 * 3];
@@ -35,6 +36,7 @@ namespace HERO_Serial
         public Control()
         {
             dataOut = new byte[8]; // TODO: this probably needs to be something else
+            pdp = new PowerDistributionPanel((int)Constants.CANID.PDP_ID);
         }
 
         
@@ -374,9 +376,9 @@ namespace HERO_Serial
             //    dataOut[i] = (byte)(talons[i].GetOutputCurrent() * 4);
             // NEW WAY:
             // Should have 8 data bytes
-            Utils.CurrentEncodeArray(Drivetrain.getInstance().GetCurrents()).CopyTo(dataOut, 0);
-            Utils.CurrentEncodeArray(BucketLadder.getInstance().GetCurrents()).CopyTo(dataOut, 4);
-            Utils.CurrentEncodeArray(DepositSystem.getInstance().GetCurrents()).CopyTo(dataOut, 7);
+            Utils.CurrentEncodeArray(Drivetrain.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 0);
+            Utils.CurrentEncodeArray(BucketLadder.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 4);
+            Utils.CurrentEncodeArray(DepositSystem.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 7);
             // Keeping this...
             // arm angle
             //val = pot1.Read();
