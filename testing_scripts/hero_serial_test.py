@@ -3,8 +3,8 @@ from pynput import keyboard # pynput
 import threading
 import time
 
-forward = 0x7D  # 150 = 0x96, 125 = 7D
-back = 0x4B     # 50 = 0x32, 75 = 0x4B
+forward = 0xC8  # 200 = 0xC8, 150 = 0x96, 125 = 7D
+back = 0x00     # 0 = 0x00, 50 = 0x32, 75 = 0x4B
 stop = 0x64     # 100 = 0x64
 
 EXIT = False
