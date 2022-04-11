@@ -2,10 +2,13 @@ import serial   # pyserial
 from pynput import keyboard # pynput
 import threading
 import time
+import struct
 
 forward = 0xC8  # 200 = 0xC8, 150 = 0x96, 125 = 7D
 back = 0x00     # 0 = 0x00, 50 = 0x32, 75 = 0x4B
 stop = 0x64     # 100 = 0x64
+
+interpret_data_as_floats = True;
 
 EXIT = False
 
@@ -141,9 +144,19 @@ class serial_thread(threading.Thread):
                     print(in_b.hex())
                     count = int.from_bytes(in_b, "big") & 0x3F
                     # get data bytes, print them
+                    float_bytes = bytearray()
+                    float_count = 0
                     for x in range(count):
                         in_b = ser.read(1)
-                        print(in_b.hex())
+                        if interpret_data_as_floats:
+                            float_bytes += in_b
+                            float_count += 1
+                            if (float_count == 4):
+                                print(struct.unpack('f', float_bytes))
+                                float_count = 0
+                                float_bytes = bytearray()
+                        else:
+                            print(in_b.hex())
                     # get checksum, print it, no verification for now
                     in_b = ser.read(1)
                     print(in_b.hex())
