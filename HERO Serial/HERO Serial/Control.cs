@@ -40,8 +40,9 @@ namespace HERO_Serial
             // 2 deposit bin currents
             // 1 conveyor current
             // 2 bucket ladder angles
-            // 13 floats - 52 bytes
-            dataOut = new byte[52]; // TODO: this probably needs to be something else
+            // 2 limit switches
+            // 13 floats + 2 bytes = 54 bytes
+            dataOut = new byte[54]; // TODO: this probably needs to be something else
             pdp = new PowerDistributionPanel((int)Constants.CANID.PDP_ID);
         }
 
@@ -385,11 +386,14 @@ namespace HERO_Serial
             // 4 bucket ladder currents
             // 3 deposit system currents
             // 2 bucket ladder angles
-            // 13 floats - 52 bytes
+            // 2 limit switches
+            // 13 floats + 2 bytes = 54 bytes
             Utils.EncodeFloatToByteArray(Drivetrain.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 0);
             Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 16);
             Utils.EncodeFloatToByteArray(DepositSystem.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 32);
             Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetAngles()).CopyTo(dataOut, 44);
+            dataOut[52] = (byte)0;
+            dataOut[53] = (byte)1;
             // Keeping this...
             // arm angle
             //val = pot1.Read();
