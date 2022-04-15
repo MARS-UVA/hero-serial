@@ -1,0 +1,13 @@
+DFL00 - drivetrain front left
+DFR01 - drivetrain front right
+DBL02 - drivetrain back left
+DBR03 - drivetrain back right
+BAL15 - bucket angle left
+BAR14 - bucket angle right
+BTR13 - bucket translation
+BCD12 - bucket chain driver
+PBL11 - deposit bin left
+PBR10 - deposit bin right
+PCV04 - deposit conveyor
+
+
