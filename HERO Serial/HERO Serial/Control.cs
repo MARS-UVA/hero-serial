@@ -184,11 +184,11 @@ namespace HERO_Serial
                              * drive front right
                              * drive back left
                              * drive back right
-                             * bucket ladder
+                             * bucket ladder lifters
                              * bucket extender
                              * bucket chain driver
-                             * basket lifter
-                             * 
+                             * deposit bin lifters
+                             * conveyor driver
                              */
                             float upperbound = 1.0f;
                             switch(i)
@@ -224,6 +224,10 @@ namespace HERO_Serial
                                 case 7:
                                     deposit.BasketLiftDirectControl(command, upperbound);
                                     Debug.Print("DB angle: " + command.ToString());
+                                    break;
+                                case 8:
+                                    deposit.ConveyorDirectControl(command, upperbound);
+                                    Debug.Print("Conveyor: " + command.ToString());
                                     break;
                                 default:
                                     // Do nothing
