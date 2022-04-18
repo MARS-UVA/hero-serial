@@ -49,16 +49,15 @@ namespace HERO_Serial
             var control = new Control();
             var serial = new Serial();
 
-            var gamepad = new LogitechGamepad(0);
+            //var gamepad = new LogitechGamepad(0);
 
             while (true)
             {
-                serial.ReadFromSerial();
-                control.ReadAction(serial.decoded);
-                control.GetStatus();
-                serial.SendBytes(control.dataOut);
+                //serial.ReadFromSerial();
+                //control.ReadAction(serial.decoded);
+                //control.GetStatus();
+                //serial.SendBytes(control.dataOut);
 
-                //control.HandleXGamepad(); // for direct control
 
                 // This function has no loop. Relies on this loop periodically execute. 
                 // The old one had a while loop, so I'm not sure how it ever exited. 

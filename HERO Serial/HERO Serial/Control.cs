@@ -53,6 +53,7 @@ namespace HERO_Serial
 
             if (gamepad.IsConnected())
             {
+                Debug.Print("gamdpad connected");
 
                 // Get the subsystems
                 var drivetrain = Drivetrain.getInstance();
