@@ -4,99 +4,295 @@ import threading
 import time
 import struct
 
-forward = 0xC8  # 200 = 0xC8, 150 = 0x96, 125 = 7D
-back = 0x00     # 0 = 0x00, 50 = 0x32, 75 = 0x4B
-stop = 0x64     # 100 = 0x64
+#------------------------Controls-------------------------------------------#
+    # P writes 0 to all motors
+    # X sends stop opcode which will require a restart to get out of
+    # W, A, S, D for drivetrain
+    # R, F for bucket ladder angle
+    # T, G for bucket ladder translation
+    # Y, H for bucket ladder chain driver
+    # U, J for conveyor driver
+    # I, K for deposit bin
+#---------------------------------------------------------------------------#
+
+#-----------------------Protocol Bytes--------------------------------------#
+header = 0xFF
+direct_opcount = 0x49                   # 01 001001, direct control, 9 data bytes
+stop_opcount = 0x00
+
+def calculate_checksum(instruction):
+    checksum = 0
+    for val in instruction:
+        checksum += val
+    return checksum % 0x100
+#---------------------------------------------------------------------------#
+
+#-----------------------Stop Motor Value------------------------------------#
+stop = 100
+#---------------------------------------------------------------------------#
+
+#-----------------------Drivetrain Motor Values-----------------------------#
+dt_forw = 150
+dt_back = 50
+#---------------------------------------------------------------------------#
+
+#-----------------------Deposit Motor Values----------------------------#
+db_up = 150
+db_down = 50
+conv_forw = 150
+conv_rev = 50
+#---------------------------------------------------------------------------#
+
+#-----------------------Bucket Ladder Motor Values----------------------------#
+bl_up = 150
+bl_down = 50
+bl_out = 150
+bl_in = 50
+bl_chain_forw = 150
+bl_chain_rev = 50
+#---------------------------------------------------------------------------#
 
 interpret_data_as_floats = True;
 
 EXIT = False
 
-# w = forward
-# a = left
-# s = reverse
-# d = right
-# p = stop
-# x = stopcode
-
 def on_press(key):
     try:
         if key.char == 'w':
             instruction = bytearray()
-            instruction.append(0xFF)     # header, 255
-            instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
-            instruction.append(forward)     # front left, 150
-            instruction.append(forward)     # front right, 150
-            instruction.append(forward)     # back left, 150
-            instruction.append(forward)     # back right, 150
+            instruction.append(header)     # header, 255
+            instruction.append(direct_opcount)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
+            instruction.append(dt_forw)     # front left, 150
+            instruction.append(dt_forw)     # front right, 150
+            instruction.append(dt_forw)     # back left, 150
+            instruction.append(dt_forw)     # back right, 150
             instruction.append(stop)     # bucket ladder angle, 100
             instruction.append(stop)     # bucket ladder translation, 100
             instruction.append(stop)     # bucket ladder chain driver, 100
             instruction.append(stop)     # deposit bin angle, 100
-            checksum = (0xFF + 0x48 + (forward*4 + stop*4)) % 0x100
-            instruction.append(checksum)     # checksum, 1327%256 = 47
+            instruction.append(stop)     # conveyor driver
+            instruction.append(calculate_checksum(instruction))     # checksum, 1327%256 = 47
             ser.write(instruction)
-            print('forward')
+            print('drive forward')
         elif key.char =='a':
             instruction = bytearray()
-            instruction.append(0xFF)     # header, 255
-            instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
-            instruction.append(back)     # front left, 50
-            instruction.append(forward)     # front right, 150
-            instruction.append(back)     # back left, 50
-            instruction.append(forward)     # back right, 150
+            instruction.append(header)     # header, 255
+            instruction.append(direct_opcount)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
+            instruction.append(dt_back)     # front left, 50
+            instruction.append(dt_forw)     # front right, 150
+            instruction.append(dt_back)     # back left, 50
+            instruction.append(dt_forw)     # back right, 150
             instruction.append(stop)     # bucket ladder angle, 100
             instruction.append(stop)     # bucket ladder translation, 100
             instruction.append(stop)     # bucket ladder chain driver, 100
             instruction.append(stop)     # deposit bin angle, 100
-            checksum = (0xFF + 0x48 + (forward*2 + back*2 + stop*4)) % 0x100
-            instruction.append(checksum)     # checksum, 1127%256 = 103
+            instruction.append(stop)     # conveyor driver
+            instruction.append(calculate_checksum(instruction))     # checksum, 1127%256 = 103
             ser.write(instruction)
-            print('left')
+            print('drive left')
         elif key.char == 's':
             instruction = bytearray()
-            instruction.append(0xFF)     # header, 255
-            instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
-            instruction.append(back)     # front left, 50
-            instruction.append(back)     # front right, 50
-            instruction.append(back)     # back left, 50
-            instruction.append(back)     # back right, 50
+            instruction.append(header)     # header, 255
+            instruction.append(direct_opcount)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
+            instruction.append(dt_back)     # front left, 50
+            instruction.append(dt_back)     # front right, 50
+            instruction.append(dt_back)     # back left, 50
+            instruction.append(dt_back)     # back right, 50
             instruction.append(stop)     # bucket ladder angle, 100
             instruction.append(stop)     # bucket ladder translation, 100
             instruction.append(stop)     # bucket ladder chain driver, 100
             instruction.append(stop)     # deposit bin angle, 100
-            checksum = (0xFF + 0x48 + (back*4 + stop*4)) % 0x100
-            instruction.append(checksum)     # checksum, 927%256 = 159
+            instruction.append(stop)     # conveyor driver
+            instruction.append(calculate_checksum(instruction))     # checksum, 927%256 = 159
             ser.write(instruction)
-            print('back')
+            print('drive back')
         elif key.char == 'd':
             instruction = bytearray()
-            instruction.append(0xFF)     # header, 255
-            instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
-            instruction.append(forward)     # front left, 150
-            instruction.append(back)     # front right, 50
-            instruction.append(forward)     # back left, 150
-            instruction.append(back)     # back right, 50
+            instruction.append(header)     # header, 255
+            instruction.append(direct_opcount)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
+            instruction.append(dt_forw)     # front left, 150
+            instruction.append(dt_back)     # front right, 50
+            instruction.append(dt_forw)     # back left, 150
+            instruction.append(dt_back)     # back right, 50
             instruction.append(stop)     # bucket ladder angle, 100
             instruction.append(stop)     # bucket ladder translation, 100
             instruction.append(stop)     # bucket ladder chain driver, 100
             instruction.append(stop)     # deposit bin angle, 100
-            checksum = (0xFF + 0x48 + (forward*2 + back*2 + stop*4)) % 0x100
-            instruction.append(checksum)     # checksum, 1127%256 = 103
+            instruction.append(stop)     # conveyor driver
+            instruction.append(calculate_checksum(instruction))     # checksum, 1127%256 = 103
             ser.write(instruction)
-            print('right')
+            print('drive right')
+        elif key.char == 'r':
+            instruction = bytearray()
+            instruction.append(header)
+            instruction.append(direct_opcount)
+            instruction.append(stop) # front left drive
+            instruction.append(stop) # front right drive
+            instruction.append(stop) # back left drive
+            instruction.append(stop) # back right drive
+            instruction.append(bl_up) # bucket ladder angle
+            instruction.append(stop) # bucket ladder translation
+            instruction.append(stop) # bucket ladder chain driver
+            instruction.append(stop) # deposit bin
+            instruction.append(stop) # conveyor driver
+            instruction.append(calculate_checksum(instruction))
+            ser.write(instruction)
+            print('bucket ladder up')
+        elif key.char == 'f':
+            instruction = bytearray()
+            instruction.append(header)
+            instruction.append(direct_opcount)
+            instruction.append(stop) # front left drive
+            instruction.append(stop) # front right drive
+            instruction.append(stop) # back left drive
+            instruction.append(stop) # back right drive
+            instruction.append(bl_down) # bucket ladder angle
+            instruction.append(stop) # bucket ladder translation
+            instruction.append(stop) # bucket ladder chain driver
+            instruction.append(stop) # deposit bin
+            instruction.append(stop) # conveyor driver
+            instruction.append(calculate_checksum(instruction))
+            ser.write(instruction)
+            print('bucket ladder down')
+        elif key.char == 't':
+            instruction = bytearray()
+            instruction.append(header)
+            instruction.append(direct_opcount)
+            instruction.append(stop) # front left drive
+            instruction.append(stop) # front right drive
+            instruction.append(stop) # back left drive
+            instruction.append(stop) # back right drive
+            instruction.append(stop) # bucket ladder angle
+            instruction.append(bl_out) # bucket ladder translation
+            instruction.append(stop) # bucket ladder chain driver
+            instruction.append(stop) # deposit bin
+            instruction.append(stop) # conveyor driver
+            instruction.append(calculate_checksum(instruction))
+            ser.write(instruction)
+            print('bucket ladder out')
+        elif key.char == 'g':
+            instruction = bytearray()
+            instruction.append(header)
+            instruction.append(direct_opcount)
+            instruction.append(stop) # front left drive
+            instruction.append(stop) # front right drive
+            instruction.append(stop) # back left drive
+            instruction.append(stop) # back right drive
+            instruction.append(stop) # bucket ladder angle
+            instruction.append(bl_in) # bucket ladder translation
+            instruction.append(stop) # bucket ladder chain driver
+            instruction.append(stop) # deposit bin
+            instruction.append(stop) # conveyor driver
+            instruction.append(calculate_checksum(instruction))
+            ser.write(instruction)
+            print('bucket ladder in')
+        elif key.char == 'y':
+            instruction = bytearray()
+            instruction.append(header)
+            instruction.append(direct_opcount)
+            instruction.append(stop) # front left drive
+            instruction.append(stop) # front right drive
+            instruction.append(stop) # back left drive
+            instruction.append(stop) # back right drive
+            instruction.append(stop) # bucket ladder angle
+            instruction.append(stop) # bucket ladder translation
+            instruction.append(bl_chain_forw) # bucket ladder chain driver
+            instruction.append(stop) # deposit bin
+            instruction.append(stop) # conveyor driver
+            instruction.append(calculate_checksum(instruction))
+            ser.write(instruction)
+            print('bucket ladder chain forward')
+        elif key.char == 'h':
+            instruction = bytearray()
+            instruction.append(header)
+            instruction.append(direct_opcount)
+            instruction.append(stop) # front left drive
+            instruction.append(stop) # front right drive
+            instruction.append(stop) # back left drive
+            instruction.append(stop) # back right drive
+            instruction.append(stop) # bucket ladder angle
+            instruction.append(stop) # bucket ladder translation
+            instruction.append(bl_chain_rev) # bucket ladder chain driver
+            instruction.append(stop) # deposit bin
+            instruction.append(stop) # conveyor driver
+            instruction.append(calculate_checksum(instruction))
+            ser.write(instruction)
+            print('bucket ladder chain reverse')
+        elif key.char == 'u':
+            instruction = bytearray()
+            instruction.append(header)
+            instruction.append(direct_opcount)
+            instruction.append(stop) # front left drive
+            instruction.append(stop) # front right drive
+            instruction.append(stop) # back left drive
+            instruction.append(stop) # back right drive
+            instruction.append(stop) # bucket ladder angle
+            instruction.append(stop) # bucket ladder translation
+            instruction.append(stop) # bucket ladder chain driver
+            instruction.append(stop) # deposit bin
+            instruction.append(conv_forw) # conveyor driver
+            instruction.append(calculate_checksum(instruction))
+            ser.write(instruction)
+            print('conveyor forward')
+        elif key.char == 'j':
+            instruction = bytearray()
+            instruction.append(header)
+            instruction.append(direct_opcount)
+            instruction.append(stop) # front left drive
+            instruction.append(stop) # front right drive
+            instruction.append(stop) # back left drive
+            instruction.append(stop) # back right drive
+            instruction.append(stop) # bucket ladder angle
+            instruction.append(stop) # bucket ladder translation
+            instruction.append(stop) # bucket ladder chain driver
+            instruction.append(stop) # deposit bin
+            instruction.append(conv_rev) # conveyor driver
+            instruction.append(calculate_checksum(instruction))
+            ser.write(instruction)
+            print('conveyor reverse')
+        elif key.char == 'i':
+            instruction = bytearray()
+            instruction.append(header)
+            instruction.append(direct_opcount)
+            instruction.append(stop) # front left drive
+            instruction.append(stop) # front right drive
+            instruction.append(stop) # back left drive
+            instruction.append(stop) # back right drive
+            instruction.append(stop) # bucket ladder angle
+            instruction.append(stop) # bucket ladder translation
+            instruction.append(stop) # bucket ladder chain driver
+            instruction.append(db_up) # deposit bin
+            instruction.append(stop) # conveyor driver
+            instruction.append(calculate_checksum(instruction))
+            ser.write(instruction)
+            print('deposit bin up')
+        elif key.char == 'k':
+            instruction = bytearray()
+            instruction.append(header)
+            instruction.append(direct_opcount)
+            instruction.append(stop) # front left drive
+            instruction.append(stop) # front right drive
+            instruction.append(stop) # back left drive
+            instruction.append(stop) # back right drive
+            instruction.append(stop) # bucket ladder angle
+            instruction.append(stop) # bucket ladder translation
+            instruction.append(stop) # bucket ladder chain driver
+            instruction.append(db_down) # deposit bin
+            instruction.append(stop) # conveyor driver
+            instruction.append(calculate_checksum(instruction))
+            ser.write(instruction)
+            print('deposit bin down')
         elif key.char == 'x':           # STOP command
             instruction = bytearray()
-            instruction.append(0xFF)    # header, 255
-            instruction.append(0x00)    # opcode + count: 00 000000, stop, 0 databytes, 0
-            checksum = (0xFF + 0x00) % 0x100
-            instruction.append(checksum)    # checksum, 255%256 = 255
+            instruction.append(header)    # header, 255
+            instruction.append(stop_opcount)    # opcode + count: 00 000000, stop, 0 databytes, 0
+            instruction.append(calculate_checksum(instruction))    # checksum, 255%256 = 255
             ser.write(instruction)
             print('STOP')
         elif key.char == 'p':           # stop in the form of 0 driver
             instruction = bytearray()
-            instruction.append(0xFF)     # header, 255
-            instruction.append(0x48)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
+            instruction.append(header)     # header, 255
+            instruction.append(direct_opcount)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
             instruction.append(stop)     # front left, 100
             instruction.append(stop)     # front right, 100
             instruction.append(stop)     # back left, 100
@@ -105,8 +301,8 @@ def on_press(key):
             instruction.append(stop)     # bucket ladder translation, 100
             instruction.append(stop)     # bucket ladder chain driver, 100
             instruction.append(stop)     # deposit bin angle, 100
-            checksum = (0xFF + 0x48 + stop*8) % 0x100
-            instruction.append(checksum)     # checksum, 1127%256 = 103
+            instruction.append(stop)     # conveyor driver
+            instruction.append(calculate_checksum(instruction))     # checksum, 1127%256 = 103
             ser.write(instruction)
             print('stop')
     except AttributeError:
