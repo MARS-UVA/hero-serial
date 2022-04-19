@@ -53,7 +53,7 @@ namespace HERO_Serial
 
             if (gamepad.IsConnected())
             {
-                Debug.Print("gamdpad connected");
+                //Debug.Print("gamepad connected");
 
                 // Get the subsystems
                 var drivetrain = Drivetrain.getInstance();
@@ -61,39 +61,65 @@ namespace HERO_Serial
                 var deposit = DepositSystem.getInstance();
 
                 // Get drive input from the right stick
-                float driveForwards = gamepad.GetRightX() * 0.25f;
-                float driveTurn = gamepad.GetRightY() * 0.25f;
+                float driveForwards = gamepad.GetRightY() * 0.50f;
+                float driveTurn = gamepad.GetRightX() * 0.50f;
+                //Debug.Print("Right Y: " + driveForwards.ToString());
+                //Debug.Print("Right X: " + driveTurn.ToString());
 
                 // Pass it to the drivetrain
-                drivetrain.DirectDrive(driveForwards, driveTurn, 0.1f);
+                drivetrain.DirectDrive(driveForwards, driveTurn, 1.0f);
 
                 // Get input for the bucket ladder
-                float bucketHeight = gamepad.GetLeftX();
-                float bucketExtension = gamepad.GetLeftY();
+                float bucketHeight = gamepad.GetLeftY() * -1.0f;
+                float bucketExtension = gamepad.GetLeftX();
+                float bucketChain = -0.5f * (gamepad.GetRightTrigger() + 1.0f) + 0.5f * (gamepad.GetLeftTrigger() + 1.0f);
+                //Debug.Print("Left Y: " + bucketHeight.ToString());
+                //Debug.Print("Left X: " + bucketExtension.ToString());
+                //Debug.Print("Chain: " + bucketChain.ToString());
 
                 // Pass to the bucket ladder subsystem
-                bucketladder.HeightDirectControl(bucketHeight, 0.1f);
-                bucketladder.ExtendDirectControl(bucketExtension, 0.1f);
+                bucketladder.HeightDirectControl(bucketHeight, 1.0f);
+                bucketladder.ExtendDirectControl(bucketExtension, 1.0f);
+                bucketladder.ChainDirectControl(bucketChain, 1.0f);
 
                 // Get input for the basket
-                // Y lifts the basket, X lowers it
+                // Y lifts the basket, A lowers it
                 // This has been tested
                 var basketLift = 0f;
                 if (gamepad.IsYPressed() && gamepad.IsAPressed())
                 {
                     basketLift = 0f;
-                } 
+                }
                 else if (gamepad.IsYPressed())
                 {
                     basketLift = -1f;
-                } 
-                else if(gamepad.IsAPressed())
+                }
+                else if (gamepad.IsAPressed())
                 {
                     basketLift = 1f;
                 }
 
                 // Pass it to the Deposit subsytem
                 deposit.BasketLiftDirectControl(basketLift, 0.5f);
+
+                // Get input for the conveyor
+                // B moves towards deposit bin, X away
+                var conveyorSpeed = 0f;
+                if (gamepad.IsBPressed() && gamepad.IsXPressed())
+                {
+                    conveyorSpeed = 0f;
+                }
+                else if (gamepad.IsXPressed())
+                {
+                    conveyorSpeed = -1f;
+                }
+                else if (gamepad.IsBPressed())
+                {
+                    conveyorSpeed = 1f;
+                }
+
+                // Pass it to the Deposit subsytem
+                deposit.ConveyorDirectControl(conveyorSpeed, 0.5f);
 
                 // Feed the watchdog so we don't timeout
                 CTRE.Phoenix.Watchdog.Feed();

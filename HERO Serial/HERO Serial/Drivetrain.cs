@@ -4,6 +4,8 @@ using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
 using CTRE.Phoenix;
 using HERO_Serial;
+using System;
+using Microsoft.SPOT;
 
 /**
  * This is a class to represent the Drivetrain subsystem
@@ -71,6 +73,8 @@ public class Drivetrain
 		//currents[1] = leftFollower.GetOutputCurrent();
 		//currents[2] = rightLeader.GetOutputCurrent();
 		//currents[3] = rightFollower.GetOutputCurrent();
+
+		Debug.Print(pdp.GetChannelCurrent(0).ToString());
 
 		return currents;
     }
