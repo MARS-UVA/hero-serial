@@ -53,15 +53,15 @@ namespace HERO_Serial
 
             while (true)
             {
-                //serial.ReadFromSerial();
-                //control.ReadAction(serial.decoded);
-                //control.GetStatus();
-                //serial.SendBytes(control.dataOut);
+                serial.ReadFromSerial();
+                control.ReadAction(serial.decoded);
+                control.GetStatus();
+                serial.SendBytes(control.dataOut);
 
 
                 // This function has no loop. Relies on this loop periodically execute. 
                 // The old one had a while loop, so I'm not sure how it ever exited. 
-                control.DirectUserControl(); // New direct control function
+                //control.DirectUserControl(); // New direct control function
 
                 /*
                  * Y - Raises the basket

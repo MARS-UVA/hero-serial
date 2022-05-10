@@ -2,6 +2,7 @@ using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.MotorControl;
 using HERO_Serial;
 using CTRE.Phoenix;
+using Microsoft.SPOT.Hardware;
 using System;
 
 /**
@@ -16,6 +17,8 @@ class DepositSystem
     private readonly TalonSRX basketLifter1;
     private readonly TalonSRX conveyorDriver;
     private bool enable;
+    static readonly InputPort topSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin4, false, Port.ResistorMode.Disabled);
+    static readonly InputPort botSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin3, false, Port.ResistorMode.Disabled);
 
     private DepositSystem()
     {
@@ -44,6 +47,29 @@ class DepositSystem
         //currents[0] = basketLifter.GetOutputCurrent();
 
         return currents;
+    }
+
+    // Get the values on the deposit bin limit switches; 1 = pressed, 0 = not pressed
+    public byte[] GetSwitches()
+    {
+        byte[] switches = new byte[2]; // top, bottom
+        if (topSwitch.Read())
+        {
+            switches[0] = (byte)1;
+        } 
+        else
+        {
+            switches[0] = (byte)0;
+        }
+        if (botSwitch.Read())
+        {
+            switches[1] = (byte)1;
+        }
+        else
+        {
+            switches[1] = (byte)0;
+        }
+        return switches;
     }
 
     // Quick function to stop all the motors

@@ -423,8 +423,8 @@ namespace HERO_Serial
             Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 16);
             Utils.EncodeFloatToByteArray(DepositSystem.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 32);
             Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetAngles()).CopyTo(dataOut, 44);
-            dataOut[52] = (byte)0;
-            dataOut[53] = (byte)1;
+            DepositSystem.getInstance().GetSwitches().CopyTo(dataOut, 52);
+            Debug.Print("TOP: " + dataOut[52] + ", BOT: " + dataOut[53]);
             // Keeping this...
             // arm angle
             //val = pot1.Read();
