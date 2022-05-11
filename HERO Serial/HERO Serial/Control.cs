@@ -218,22 +218,23 @@ namespace HERO_Serial
                              * conveyor driver
                              */
                             float upperbound = 1.0f;
+                            float drivetrainScale = 0.5f;
                             switch(i)
                             {
                                 case 0:
-                                    drivetrain.DirectDriveLeft(command, upperbound); // Both front and left take the same power? 
+                                    drivetrain.DirectDriveLeft(command * drivetrainScale, upperbound); // Both front and left take the same power? 
                                     Debug.Print("Front left: " + command.ToString());
                                     break;
                                 case 1:
-                                    drivetrain.DirectDriveRight(command, upperbound);
+                                    drivetrain.DirectDriveRight(command * drivetrainScale, upperbound);
                                     Debug.Print("Front right: " + command.ToString());
                                     break;
                                 case 2:
-                                    drivetrain.DirectDriveLeft(command, upperbound);
+                                    drivetrain.DirectDriveLeft(command * drivetrainScale, upperbound);
                                     Debug.Print("Back left: " + command.ToString());
                                     break;
                                 case 3:
-                                    drivetrain.DirectDriveRight(command, upperbound);
+                                    drivetrain.DirectDriveRight(command * drivetrainScale, upperbound);
                                     Debug.Print("Back right: " + command.ToString());
                                     break;
                                 case 4:
