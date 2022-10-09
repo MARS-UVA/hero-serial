@@ -1,5 +1,4 @@
-﻿using System;
-using CTRE.Phoenix.MotorControl.CAN;
+﻿using CTRE.Phoenix.MotorControl.CAN;
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
 using CTRE.Phoenix;

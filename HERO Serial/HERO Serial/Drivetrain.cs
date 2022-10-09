@@ -4,7 +4,6 @@ using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
 using CTRE.Phoenix;
 using HERO_Serial;
-using System;
 using Microsoft.SPOT;
 
 /**
