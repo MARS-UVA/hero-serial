@@ -11,7 +11,6 @@ namespace HERO_Serial
     public class Program
     {
         static readonly TalonSRX[] talons = new TalonSRX[8];
-        static readonly PigeonIMU pigeon;
 
         static Program() {
             // New IDS:

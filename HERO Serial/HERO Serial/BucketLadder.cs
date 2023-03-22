@@ -17,7 +17,8 @@ public class BucketLadder
     private static BucketLadder instance;
     private readonly TalonSRX ladderLifter0;
     private readonly TalonSRX ladderLifter1;
-    private readonly TalonSRX ladderExtender;
+    private readonly TalonSRX ladderExtender1;
+    private readonly TalonSRX ladderExtender2;
     private readonly TalonSRX chainDriver;
     private bool enable;
     static readonly AnalogInput pot0 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
@@ -30,7 +31,8 @@ public class BucketLadder
         // Initalize all the Talons
         ladderLifter0 = new TalonSRX((int)Constants.CANID.BUCKETLADDER_LIFTER0_TALON_ID);
         ladderLifter1 = new TalonSRX((int)Constants.CANID.BUCKETLADDER_LIFTER1_TALON_ID);
-        ladderExtender = new TalonSRX((int)Constants.CANID.BUCKETLADDER_EXTENDER_TALON_ID);
+        ladderExtender1 = new TalonSRX((int)Constants.CANID.BUCKETLADDER_EXTENDER1_TALON_ID);
+        ladderExtender2 = new TalonSRX((int)Constants.CANID.BUCKETLADDER_EXTENDER2_TALON_ID);
         chainDriver = new TalonSRX((int)Constants.CANID.BUCKETLADDER_CHAIN_DRIVER_TALON_ID);
 
         // TODO: Add settings, current limits, etc
@@ -53,7 +55,7 @@ public class BucketLadder
         float[] currents = new float[4];
         currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_LIFTER0_TALON_ID);
         currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_LIFTER1_TALON_ID);
-        currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_EXTENDER_TALON_ID);
+        currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_EXTENDER1_TALON_ID);
         currents[2] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_CHAIN_DRIVER_TALON_ID);
         //currents[0] = ladderLifter.GetOutputCurrent();
         //currents[1] = ladderExtender.GetOutputCurrent();
@@ -79,7 +81,8 @@ public class BucketLadder
         // I think this will disable those motors. May need to explicitly enabled
         ladderLifter0.Set(ControlMode.Disabled, 0.0f);
         ladderLifter1.Set(ControlMode.Disabled, 0.0f);
-        ladderExtender.Set(ControlMode.Disabled, 0.0f);
+        ladderExtender1.Set(ControlMode.Disabled, 0.0f);
+        ladderExtender2.Set(ControlMode.Disabled, 0.0f);
         chainDriver.Set(ControlMode.Disabled, 0.0f);
 
         enable = false;
@@ -91,7 +94,8 @@ public class BucketLadder
     {
         if (enable)
         {
-            ladderExtender.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+            ladderExtender1.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+            ladderExtender2.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
         }
         
     }

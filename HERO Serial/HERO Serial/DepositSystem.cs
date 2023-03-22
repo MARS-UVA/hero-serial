@@ -15,7 +15,7 @@ class DepositSystem
     private static DepositSystem instance;
     private readonly TalonSRX basketLifter0;
     private readonly TalonSRX basketLifter1;
-    private readonly TalonSRX conveyorDriver;
+    private readonly TalonSRX basketFlipper;
     private bool enable;
     static readonly InputPort topSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin4, false, Port.ResistorMode.Disabled);
     static readonly InputPort botSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin3, false, Port.ResistorMode.Disabled);
@@ -24,7 +24,7 @@ class DepositSystem
     {
         basketLifter0 = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER0_TALON_ID);
         basketLifter1 = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID);
-        conveyorDriver = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_CONVEYOR_DRIVER_TALON_ID);
+        basketFlipper = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_FLIP_TALON_ID);
         enable = true;
     }
 
@@ -43,7 +43,7 @@ class DepositSystem
         float[] currents = new float[3];
         currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER0_TALON_ID);
         currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID);
-        currents[2] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_CONVEYOR_DRIVER_TALON_ID);
+        currents[2] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_FLIP_TALON_ID);
         //currents[0] = basketLifter.GetOutputCurrent();
 
         return currents;
@@ -79,7 +79,7 @@ class DepositSystem
         // I think this will disable those motors. May need to explicitly enabled
         basketLifter0.Set(ControlMode.Disabled, 0.0f);
         basketLifter1.Set(ControlMode.Disabled, 0.0f);
-        conveyorDriver.Set(ControlMode.Disabled, 0.0f);
+        basketFlipper.Set(ControlMode.Disabled, 0.0f);
 
         enable = false;
     }
@@ -94,11 +94,11 @@ class DepositSystem
         
     }
 
-    public void ConveyorDirectControl(float power, float upperBound)
+    public void FlipperDirectControl(float power, float upperBound)
     {
         if (enable)
         {
-            conveyorDriver.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+            basketFlipper.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
         }
     }
 }

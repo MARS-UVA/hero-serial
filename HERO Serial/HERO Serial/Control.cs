@@ -15,17 +15,17 @@ namespace HERO_Serial
         readonly PowerDistributionPanel pdp;
         
         public readonly byte[] dataOut;
-        readonly byte[] temp = new byte[4 * 3];
+        //readonly byte[] temp = new byte[4 * 3];
         // linear x, linear y, angular z
-        readonly float[] twist = new float[3];
+        //readonly float[] twist = new float[3];
         // arm angle potentiometer
         //readonly AnalogInput pot1 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
         // arm translation potentiometer
         //readonly AnalogInput pot2 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
-        readonly int minAngle = 30;
-        readonly int maxAngle = 90;
-        readonly int minTrans = 1;
-        readonly int maxTrans = 10;
+        //readonly int minAngle = 30;
+        //readonly int maxAngle = 90;
+        //readonly int minTrans = 1;
+        //readonly int maxTrans = 10;
 
         //public Control(TalonSRX[] talons)
         //{
@@ -119,7 +119,7 @@ namespace HERO_Serial
                 }
 
                 // Pass it to the Deposit subsytem
-                deposit.ConveyorDirectControl(conveyorSpeed, 0.5f);
+                deposit.FlipperDirectControl(conveyorSpeed, 0.5f);
 
                 // Feed the watchdog so we don't timeout
                 CTRE.Phoenix.Watchdog.Feed();
@@ -212,10 +212,10 @@ namespace HERO_Serial
                              * drive back left
                              * drive back right
                              * bucket ladder lifters
-                             * bucket extender
+                             * bucket extenders
                              * bucket chain driver
                              * deposit bin lifters
-                             * conveyor driver
+                             * basket flipper
                              */
                             float upperbound = 1.0f;
                             float drivetrainScale = 0.5f;
@@ -254,7 +254,7 @@ namespace HERO_Serial
                                     Debug.Print("DB angle: " + command.ToString());
                                     break;
                                 case 8:
-                                    deposit.ConveyorDirectControl(command, upperbound);
+                                    deposit.FlipperDirectControl(command, upperbound);
                                     Debug.Print("Conveyor: " + command.ToString());
                                     break;
                                 default:
