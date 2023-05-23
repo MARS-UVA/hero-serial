@@ -18,7 +18,7 @@ class DepositSystem
     private readonly TalonSRX basketFlipper;
     private bool enable;
     static readonly InputPort topSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin4, false, Port.ResistorMode.Disabled);
-    static readonly InputPort botSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin3, false, Port.ResistorMode.Disabled);
+    // static readonly InputPort botSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin3, false, Port.ResistorMode.Disabled);
 
     private DepositSystem()
     {
@@ -52,7 +52,7 @@ class DepositSystem
     // Get the values on the deposit bin limit switches; 1 = pressed, 0 = not pressed
     public byte[] GetSwitches()
     {
-        byte[] switches = new byte[2]; // top, bottom
+        byte[] switches = new byte[1]; // top
         if (topSwitch.Read())
         {
             switches[0] = (byte)1;
@@ -60,14 +60,6 @@ class DepositSystem
         else
         {
             switches[0] = (byte)0;
-        }
-        if (botSwitch.Read())
-        {
-            switches[1] = (byte)1;
-        }
-        else
-        {
-            switches[1] = (byte)0;
         }
         return switches;
     }

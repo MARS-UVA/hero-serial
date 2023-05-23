@@ -21,9 +21,9 @@ public class BucketLadder
     private readonly TalonSRX ladderExtender2;
     private readonly TalonSRX chainDriver;
     private bool enable;
-    static readonly AnalogInput pot0 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
-    static readonly AnalogInput pot1 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
-
+    // static readonly AnalogInput pot0 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
+    // static readonly AnalogInput pot1 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
+    static readonly InputPort loweredSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin3, false, Port.ResistorMode.Disabled);
 
     private BucketLadder()
     {
@@ -37,7 +37,8 @@ public class BucketLadder
 
         // TODO: Add settings, current limits, etc
         enable = true;
-
+        ladderLifter0.ConfigSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        ladderLifter1.ConfigSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
     }
 
     public static BucketLadder getInstance()
@@ -67,9 +68,24 @@ public class BucketLadder
     public float[] GetAngles()
     {
         float[] angles = new float[2];
-        angles[0] = (float)pot0.Read();
-        angles[1] = (float)pot1.Read();
+        angles[0] = (float)ladderLifter0.GetSelectedSensorPosition();
+        angles[1] = (float)ladderLifter1.GetSelectedSensorPosition();
         return angles;
+    }
+
+    // Get the values on the limit switch that senses if the bucket ladder is lowered; 1 = pressed, 0 = not pressed
+    public byte[] GetSwitches()
+    {
+        byte[] switches = new byte[1]; // switch for lowered position
+        if (loweredSwitch.Read())
+        {
+            switches[0] = (byte)1;
+        }
+        else
+        {
+            switches[0] = (byte)0;
+        }
+        return switches;
     }
 
 
