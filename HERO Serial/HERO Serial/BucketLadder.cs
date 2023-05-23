@@ -21,8 +21,6 @@ public class BucketLadder
     private readonly TalonSRX ladderExtender2;
     private readonly TalonSRX chainDriver;
     private bool enable;
-    static readonly AnalogInput pot0 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
-    static readonly AnalogInput pot1 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
 
 
     private BucketLadder()
@@ -37,7 +35,8 @@ public class BucketLadder
 
         // TODO: Add settings, current limits, etc
         enable = true;
-
+        ladderLifter0.ConfigSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        ladderLifter1.ConfigSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
     }
 
     public static BucketLadder getInstance()
@@ -67,8 +66,8 @@ public class BucketLadder
     public float[] GetAngles()
     {
         float[] angles = new float[2];
-        angles[0] = (float)pot0.Read();
-        angles[1] = (float)pot1.Read();
+        angles[0] = (float)ladderLifter0.GetSelectedSensorPosition();
+        angles[1] = (float)ladderLifter1.GetSelectedSensorPosition();
         return angles;
     }
 
