@@ -61,7 +61,7 @@ namespace HERO_Serial
                 var deposit = DepositSystem.getInstance();
 
                 // Get drive input from the right stick
-                float driveForwards = gamepad.GetRightY() * 0.50f;
+                float driveForwards = gamepad.GetLeftY() * 0.50f;
                 float driveTurn = gamepad.GetRightX() * 0.50f;
                 //Debug.Print("Right Y: " + driveForwards.ToString());
                 //Debug.Print("Right X: " + driveTurn.ToString());
@@ -70,17 +70,33 @@ namespace HERO_Serial
                 drivetrain.DirectDrive(driveForwards, driveTurn, 1.0f);
 
                 // Get input for the bucket ladder
-                float bucketHeight = gamepad.GetLeftY() * -1.0f;
-                float bucketExtension = gamepad.GetLeftX();
-                float bucketChain = -0.5f * (gamepad.GetRightTrigger() + 1.0f) + 0.5f * (gamepad.GetLeftTrigger() + 1.0f);
+                // float bucketHeight = gamepad.GetLeftY() * -1.0f;
+                // float bucketExtension = gamepad.GetLeftX();
+                float bucketExtension = -0.1f * (gamepad.GetRightTrigger() + 1.0f) + 0.1f * (gamepad.GetLeftTrigger() + 1.0f);
+                bucketladder.ExtendDirectControl(bucketExtension, 1.0f);
+
+                // Shoulder buttons control the height
+                if (gamepad.IsLeftShoulderPressed())
+                {
+                    bucketladder.HeightDirectControl(1.0f, 1.0f);
+                } else if (gamepad.IsRightShoulderPressed())
+                {
+                    bucketladder.HeightDirectControl(-1.0f, 1.0f);
+                }
+                else
+                {
+                    bucketladder.HeightDirectControl(0.0f, 1.0f);
+                }
+
+
+
                 //Debug.Print("Left Y: " + bucketHeight.ToString());
                 //Debug.Print("Left X: " + bucketExtension.ToString());
                 //Debug.Print("Chain: " + bucketChain.ToString());
 
                 // Pass to the bucket ladder subsystem
-                bucketladder.HeightDirectControl(bucketHeight, 1.0f);
-                bucketladder.ExtendDirectControl(bucketExtension, 1.0f);
-                bucketladder.ChainDirectControl(bucketChain, 1.0f);
+                // bucketladder.ChainDirectControl(bucketChain, 1.0f);
+
 
                 // Get input for the basket
                 // Y lifts the basket, A lowers it
@@ -104,7 +120,7 @@ namespace HERO_Serial
 
                 // Get input for the conveyor
                 // B moves towards deposit bin, X away
-                var conveyorSpeed = 0f;
+                var conveyorSpeed = 0f; // This is currently wired backwards
                 if (gamepad.IsBPressed() && gamepad.IsXPressed())
                 {
                     conveyorSpeed = 0f;

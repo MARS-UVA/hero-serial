@@ -106,7 +106,7 @@ public class BucketLadder
         if (enable)
         {
             ladderLifter0.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
-            ladderLifter1.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+            ladderLifter1.Set(ControlMode.PercentOutput, Utils.thresh(0.9f*power, upperBound));
         }
         
     }

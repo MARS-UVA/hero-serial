@@ -3,6 +3,7 @@ using CTRE.Phoenix.MotorControl;
 using HERO_Serial;
 using CTRE.Phoenix;
 using Microsoft.SPOT.Hardware;
+using Microsoft.SPOT;
 using System;
 
 /**
@@ -26,6 +27,10 @@ class DepositSystem
         basketLifter1 = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID);
         basketFlipper = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_FLIP_TALON_ID);
         enable = true;
+
+        basketFlipper.ConfigSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        // basketFlipper.ConfigVelocityMeasurementPeriod(VelocityMeasPeriod.Period_25Ms);
+        // basketFlipper.ConfigVelocityMeasurementWindow(16);
     }
 
     public static DepositSystem getInstance()
@@ -70,6 +75,13 @@ class DepositSystem
             switches[1] = (byte)0;
         }
         return switches;
+    }
+
+    public void PrintEncoderValues()
+    {
+        Debug.Print("Encoder Velocity = " + basketFlipper.GetSelectedSensorVelocity());
+        Debug.Print("Encoder Position = " + basketFlipper.GetSelectedSensorPosition());
+        Debug.Print("Commanded Output = " + basketFlipper.GetMotorOutputPercent());
     }
 
     // Quick function to stop all the motors

@@ -52,15 +52,19 @@ namespace HERO_Serial
 
             while (true)
             {
-                serial.ReadFromSerial();
-                control.ReadAction(serial.decoded);
-                control.GetStatus();
-                serial.SendBytes(control.dataOut);
+                //serial.ReadFromSerial();
+                //control.ReadAction(serial.decoded);
+                //control.GetStatus();
+                //serial.SendBytes(control.dataOut);
 
 
                 // This function has no loop. Relies on this loop periodically execute. 
                 // The old one had a while loop, so I'm not sure how it ever exited. 
-                //control.DirectUserControl(); // New direct control function
+                control.DirectUserControl(); // New direct control function
+                // DepositSystem.getInstance().PrintEncoderValues();
+
+                InputPort input = new InputPort(CTRE.HERO.IO.Port3.Pin3, false, Port.ResistorMode.Disabled);
+                Debug.Print("Input pin read = " + input.Read());
 
                 /*
                  * Y - Raises the basket
