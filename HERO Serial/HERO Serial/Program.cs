@@ -48,12 +48,13 @@ namespace HERO_Serial
             //var control = new Control(talons);
             var control = new Control();
             var serial = new Serial();
+            var gamepad = new LogitechGamepad(0)
 
             //var gamepad = new LogitechGamepad(0);
 
             while (true)
             {
-                if(DIRECT_DRIVE_ENABLED)
+                if(DIRECT_DRIVE_ENABLED or (gamepad.IsRightShoulderPressed and gamepad.IsLeftShoulderPressed))
                 {
                     /*
                      * Y - Raises the basket
