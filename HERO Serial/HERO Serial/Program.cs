@@ -74,7 +74,16 @@ namespace HERO_Serial
                             basketAngles = (float) ladderLifter0.SetSelectedSensorPosition();
                         }
 
-                            
+                    }
+
+                    if (gamepad.IsAPressed)
+                    {
+                        float[] basketAngles = bucketLadder.GetAngles();
+                        if (float[1] == 90.0 and(float[0] == 90.0)) {
+                            // move the basket motors to get it to be 90 degrees
+                            bucketLadder.HeightDirectControl()
+                            basketAngles = (float)ladderLifter0.SetSelectedSensorPosition();
+                        }
 
                     }
                     control.DirectUserControl(); // Direct control function
