@@ -72,6 +72,9 @@ namespace HERO_Serial
                             // move the basket motors to get it to be 90 degrees
                             bucketLadder.HeightDirectControl()
                             basketAngles = (float) ladderLifter0.SetSelectedSensorPosition();
+                            if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
+                                bucketLadder.Stop()
+                            }
                         }
 
                     }
