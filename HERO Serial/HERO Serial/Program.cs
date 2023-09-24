@@ -68,10 +68,15 @@ namespace HERO_Serial
                     if (gamepad.IsYPressed)
                     {
                         float[] basketAngles = bucketLadder.GetAngles();
-                        if (float[1] == 0.0 and (float[0]== 0.0)) {
-                            // move the basket motors to get it to be 90 degrees
+                        if (float[1] == 0.0 and (float[0]== 0.0)) { 
+                            // move the bucket ladder first and then the basket and then stop at 90
                             bucketLadder.HeightDirectControl()
                             basketAngles = (float) ladderLifter0.SetSelectedSensorPosition();
+                            if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
+                                bucketLadder.Stop()
+                            }
+
+                            
                             if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
                                 bucketLadder.Stop()
                             }
@@ -86,6 +91,9 @@ namespace HERO_Serial
                             // move the basket motors to get it to be 90 degrees
                             bucketLadder.HeightDirectControl()
                             basketAngles = (float)ladderLifter0.SetSelectedSensorPosition();
+                            if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
+                                bucketLadder.Stop()
+                            }
                         }
 
                     }
