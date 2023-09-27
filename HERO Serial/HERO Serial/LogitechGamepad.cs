@@ -33,6 +33,7 @@ class LogitechGamepad
         return gamepad.GetAxis(4);
     }
     public float GetRightTrigger()
+    
     {
         return gamepad.GetAxis(5);
     }
