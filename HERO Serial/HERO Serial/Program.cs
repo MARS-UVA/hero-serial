@@ -65,13 +65,15 @@ namespace HERO_Serial
                      * A - Lowers the basket
                      * Right stick should move the drivetrain
                      */
-                    if (gamepad.IsYPressed)
+                    if () { 
+                    }
+                    else if (gamepad.IsYPressed)
                     {
                         float[] basketAngles = bucketLadder.GetAngles();
-                        if (float[1] == 0.0 and (float[0]== 0.0)) { 
+                        if (basketAngles[1] == 0.0 and(basketAngles[0] == 0.0)) {
                             // move the bucket ladder first and then the basket and then stop at 90
                             bucketLadder.HeightDirectControl()
-                            basketAngles = (float) ladderLifter0.SetSelectedSensorPosition();
+                            basketAngles = (float)ladderLifter0.SetSelectedSensorPosition();
                             if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
                                 bucketLadder.Stop()
                             }
@@ -82,13 +84,14 @@ namespace HERO_Serial
                     if (gamepad.IsAPressed)
                     {
                         float[] basketAngles = bucketLadder.GetAngles();
-                        if (float[1] == 90.0 and(float[0] == 90.0)) {
+                        if (basketAngles[1] == 90.0 and(basketAngles[0] == 90.0)) {
                             // move the basket motors to get it to be 90 degrees
-                            bucketLadder.HeightDirectControl()
+
                             basketAngles = (float)ladderLifter0.SetSelectedSensorPosition();
-                            if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
+                            if ((bucketLadder.GetAngles()[0] = 0.0) or(bucketLadder.GetAngles()[1] = 0.0)) {
                                 bucketLadder.Stop()
                             }
+                            bucketLadder.HeightDirectControl()
                         }
 
                     }
