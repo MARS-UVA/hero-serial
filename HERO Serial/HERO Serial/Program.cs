@@ -13,6 +13,9 @@ namespace HERO_Serial
         static readonly TalonSRX[] talons = new TalonSRX[8];
         const bool DIRECT_DRIVE_ENABLED = false;
 
+
+
+
         static Program() {
             // New IDS:
             // 4-5: left wheels
@@ -49,6 +52,7 @@ namespace HERO_Serial
             var control = new Control();
             var serial = new Serial();
             var gamepad = new LogitechGamepad(0)
+            var bucketLadder = new BucketLadder();
 
             //var gamepad = new LogitechGamepad(0);
 
@@ -61,6 +65,38 @@ namespace HERO_Serial
                      * A - Lowers the basket
                      * Right stick should move the drivetrain
                      */
+                    if (gamepad.IsYPressed)
+                    {
+                        float[] basketAngles = bucketLadder.GetAngles();
+                        if (float[1] == 0.0 and (float[0]== 0.0)) { 
+                            // move the bucket ladder first and then the basket and then stop at 90
+                            bucketLadder.HeightDirectControl()
+                            basketAngles = (float) ladderLifter0.SetSelectedSensorPosition();
+                            if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
+                                bucketLadder.Stop()
+                            }
+
+                            
+                            if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
+                                bucketLadder.Stop()
+                            }
+                        }
+
+                    }
+
+                    if (gamepad.IsAPressed)
+                    {
+                        float[] basketAngles = bucketLadder.GetAngles();
+                        if (float[1] == 90.0 and(float[0] == 90.0)) {
+                            // move the basket motors to get it to be 90 degrees
+                            bucketLadder.HeightDirectControl()
+                            basketAngles = (float)ladderLifter0.SetSelectedSensorPosition();
+                            if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
+                                bucketLadder.Stop()
+                            }
+                        }
+
+                    }
                     control.DirectUserControl(); // Direct control function
 
                     Thread.Sleep(10);
