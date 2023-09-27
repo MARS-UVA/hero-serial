@@ -75,11 +75,6 @@ namespace HERO_Serial
                             if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
                                 bucketLadder.Stop()
                             }
-
-                            
-                            if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
-                                bucketLadder.Stop()
-                            }
                         }
 
                     }
