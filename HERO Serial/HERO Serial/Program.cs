@@ -53,7 +53,7 @@ namespace HERO_Serial
             var serial = new Serial();
             var gamepad = new LogitechGamepad(0)
             var deposit = DepositSystem.getInstance();
-            var bucketLadder = new BucketLadder();
+            var bucketLadder = BucketLadder().getInstance();
 
             //var gamepad = new LogitechGamepad(0);
 
