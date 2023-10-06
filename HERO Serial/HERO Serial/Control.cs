@@ -86,21 +86,37 @@ namespace HERO_Serial
                 // Y lifts the basket, A lowers it
                 // This has been tested
                 var basketLift = 0f;
+                float[] basketAngles = bucketLadder.GetAngles();
                 if (gamepad.IsYPressed() && gamepad.IsAPressed())
                 {
                     basketLift = 0f;
                 }
                 else if (gamepad.IsYPressed())
                 {
-                    basketLift = -1f;
+                    if (basketAngles[1] == 0.0 and(basketAngles[0] == 0.0)) {
+                        basketLift = -1f;
+                    }
                 }
                 else if (gamepad.IsAPressed())
                 {
-                    basketLift = 1f;
+                    if (basketAngles[1] == 90.0 and(basketAngles[0] == 90.0)) {
+                        basketLift = 1f;
+                    }
                 }
 
                 // Pass it to the Deposit subsytem
+
                 deposit.BasketLiftDirectControl(basketLift, 0.5f);
+                if (basketLift == -1f) 
+                    if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
+                        bucketLadder.Stop()
+                    }
+                } else if (basketLift == 1f) 
+                    if ((bucketLadder.GetAngles()[0] = 0.0) or(bucketLadder.GetAngles()[1] = 0.0)) {
+                        bucketLadder.Stop()
+                    }
+                }
+
 
                 // Get input for the conveyor
                 // B moves towards deposit bin, X away
