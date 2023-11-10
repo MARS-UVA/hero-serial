@@ -51,9 +51,14 @@ namespace HERO_Serial
         {
             var gamepad = new LogitechGamepad(0);
 
+            if (! gamepad.IsConnected())
+            {
+                Debug.Print("not connected");
+            }
+
             if (gamepad.IsConnected())
             {
-                //Debug.Print("gamepad connected");
+                Debug.Print("gamepad connected");
 
                 // Get the subsystems
                 var drivetrain = Drivetrain.getInstance();
@@ -63,8 +68,8 @@ namespace HERO_Serial
                 // Get drive input from the right stick
                 float driveForwards = gamepad.GetRightY() * 0.50f;
                 float driveTurn = gamepad.GetRightX() * 0.50f;
-                //Debug.Print("Right Y: " + driveForwards.ToString());
-                //Debug.Print("Right X: " + driveTurn.ToString());
+                Debug.Print("Right Y: " + driveForwards.ToString());
+                Debug.Print("Right X: " + driveTurn.ToString());
 
                 // Pass it to the drivetrain
                 drivetrain.DirectDrive(driveForwards, driveTurn, 1.0f);
