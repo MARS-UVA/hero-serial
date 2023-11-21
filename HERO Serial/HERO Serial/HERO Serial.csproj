@@ -38,6 +38,7 @@
     <Compile Include="Control.cs" />
     <Compile Include="DepositSystem.cs" />
     <Compile Include="Drivetrain.cs" />
+    <Compile Include="IRSensors.cs" />
     <Compile Include="LogitechGamepad.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

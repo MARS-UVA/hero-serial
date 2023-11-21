@@ -11,6 +11,7 @@ namespace HERO_Serial
     public class Program
     {
         static readonly TalonSRX[] talons = new TalonSRX[8];
+        static bool directDriveEnabled = false;
 
         static Program() {
             // New IDS:
@@ -47,16 +48,28 @@ namespace HERO_Serial
             //var control = new Control(talons);
             var control = new Control();
             var serial = new Serial();
+            var ir = new IRSensors();
+
 
             //var gamepad = new LogitechGamepad(0);
 
             while (true)
             {
-                serial.ReadFromSerial();
-                control.ReadAction(serial.decoded);
-                control.GetStatus();
-                serial.SendBytes(control.dataOut);
+                double ir_val = ir.get_IR_readings();
+                Debug.Print("IR reading is: " + ir_val + "\n");
 
+                if (directDriveEnabled)
+                {
+                    control.DirectUserControl();
+                    Thread.Sleep(10);
+
+                } else
+                {
+                    serial.ReadFromSerial();
+                    control.ReadAction(serial.decoded);
+                    control.GetStatus();
+                    serial.SendBytes(control.dataOut);
+                }
 
                 // This function has no loop. Relies on this loop periodically execute. 
                 // The old one had a while loop, so I'm not sure how it ever exited. 
