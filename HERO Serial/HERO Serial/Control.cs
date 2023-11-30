@@ -15,6 +15,8 @@ namespace HERO_Serial
         readonly PowerDistributionPanel pdp;
         
         public readonly byte[] dataOut;
+        private IRSensors ir = new IRSensors();
+
         //readonly byte[] temp = new byte[4 * 3];
         // linear x, linear y, angular z
         //readonly float[] twist = new float[3];
@@ -426,6 +428,10 @@ namespace HERO_Serial
             Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetAngles()).CopyTo(dataOut, 44);
             DepositSystem.getInstance().GetSwitches().CopyTo(dataOut, 52);
             BucketLadder.getInstance().GetSwitches().CopyTo(dataOut, 53);
+            // 54 a hard limit? or can we add more?
+            Utils.EncodeDoubleToByteArray(ir.get_IR_readings()).CopyTo(dataOut, 54);
+            // should this be BitConverter.getBytes(ir.get_IR_readings());
+
             Debug.Print("DEPOSIT BIN RAISED: " + dataOut[52] + ", BUCKET LADDER LOWERED: " + dataOut[53]);
             // Keeping this...
             // arm angle

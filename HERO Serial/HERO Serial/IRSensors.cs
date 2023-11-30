@@ -15,6 +15,7 @@ namespace HERO_Serial
     class IRSensors
     {
         readonly AnalogInput pot0 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
+        private static readonly AnalogInput irInput = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
 
         public IRSensors()
         {
@@ -25,6 +26,13 @@ namespace HERO_Serial
         {
             double read0 = pot0.Read();
             return read0;
+        }
+
+        public static double[] get_IR_readings()
+        {
+            double[] read = new double[1];
+            read[0] = irInput.Read();
+            return read;
         }
     }
 }
