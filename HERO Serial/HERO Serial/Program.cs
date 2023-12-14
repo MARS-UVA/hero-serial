@@ -54,7 +54,7 @@ namespace HERO_Serial
             //System.IO.Ports.SerialPort _uart = new System.IO.Ports.SerialPort(CTRE.HERO.IO.Port1.UART, 115200);
 
             // IMU testing
-            byte DeviceAddress = 0x68 >> 1;
+            byte DeviceAddress = 0x68; // addr
             int ClockRate = 100; // clock rate in kHz, 100kHz is the standard for I2C
             IMUModule IMU1 = new IMUModule(DeviceAddress, ClockRate);
 
@@ -93,14 +93,14 @@ namespace HERO_Serial
                     //_uart.Write(toWrite, 0, 8);
 
                     //IMU testing
-                    //uint[] gyroData = IMU1.ReadGyroscopeData();
-                    //for (int i = 0; i < gyroData.Length; i++)
-                    //{
-                    //    Debug.Print("Gyroscope Data: (X, Y, Z)");
-                    //    Debug.Print(gyroData[i].ToString() + ", ");
-                    //}
-                    int address = IMU1.readAddress();
-                    Debug.Print("Address: " + address.ToString());
+                    uint[] gyroData = IMU1.ReadGyroscopeData();
+                    Debug.Print("Gyroscope Data: (X, Y, Z)");
+                    for (int i = 0; i < gyroData.Length; i++)
+                    {
+                        Debug.Print(gyroData[i].ToString() + ", ");
+                    }
+                    //int address = IMU1.readAddress();
+                    //Debug.Print("Address: " + address.ToString());
 
 
                     serial.ReadFromSerial();

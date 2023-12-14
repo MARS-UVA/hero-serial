@@ -36,6 +36,7 @@ public class IMUModule
         return deviceAddress[0];
     }
 
+    // returns the gyroscope data (angular velocities in x,y,z directions) from the IMU
     public uint[] ReadGyroscopeData()
     {
         uint[] gyroData = new uint[3];
