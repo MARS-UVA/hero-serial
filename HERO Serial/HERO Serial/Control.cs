@@ -431,7 +431,7 @@ namespace HERO_Serial
             Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetAngles()).CopyTo(dataOut, 44);
             DepositSystem.getInstance().GetSwitches().CopyTo(dataOut, 52);
             BucketLadder.getInstance().GetSwitches().CopyTo(dataOut, 53);
-            Debug.Print("DEPOSIT BIN RAISED: " + dataOut[52] + ", BUCKET LADDER LOWERED: " + dataOut[53]);
+            // Debug.Print("DEPOSIT BIN RAISED: " + dataOut[52] + ", BUCKET LADDER LOWERED: " + dataOut[53]);
             // Keeping this...
             // arm angle
             //val = pot1.Read();

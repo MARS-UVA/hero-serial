@@ -43,6 +43,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Serial.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="IMUModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CTRE">

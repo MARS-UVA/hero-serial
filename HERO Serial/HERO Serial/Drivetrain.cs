@@ -74,7 +74,7 @@ public class Drivetrain
 		//currents[2] = rightLeader.GetOutputCurrent();
 		//currents[3] = rightFollower.GetOutputCurrent();
 
-		Debug.Print(pdp.GetChannelCurrent(0).ToString());
+		//Debug.Print(pdp.GetChannelCurrent(0).ToString());
 
 		return currents;
     }
