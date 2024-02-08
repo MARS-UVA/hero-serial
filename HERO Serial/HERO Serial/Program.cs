@@ -1,4 +1,5 @@
 ﻿using CTRE.Phoenix.MotorControl.CAN;
+using Microsoft.SPOT.Hardware.PWM,
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
 using CTRE.Phoenix;
@@ -10,7 +11,7 @@ namespace HERO_Serial
 {
     public class Program
     {
-        static readonly TalonSRX[] talons = new TalonSRX[8];
+        static readonly TalonSRX[] talons = new TalonSRX[8]; 
 
         static Program() {
             // New IDS:
@@ -48,6 +49,17 @@ namespace HERO_Serial
             var control = new Control();
             var serial = new Serial();
 
+            // Declaring pulse periods
+            uint period = 2000; // period between pulses, 2000 = forward, 1000 = backward (may actually be time duration)
+            uint duration = 5000; // pulse duration (ms) (may actually be pulse width)
+
+            // Change Port and Pin accordingly
+            PWM sparkTest = new PWM(CTRE.HERO.IO.Port3.PWM_Pin9, period, duration, PWM.ScaleFactor.Microseconds, false);
+            // PWMSpeedController sparkMax = new PWMSpeedController(CTRE.HERO.IO.Port3.PWM_Pin9);
+
+            sparkTest.Start(); // starts the signal
+
+
             //var gamepad = new LogitechGamepad(0);
 
             while (true)
@@ -56,6 +68,12 @@ namespace HERO_Serial
                 control.ReadAction(serial.decoded);
                 control.GetStatus();
                 serial.SendBytes(control.dataOut);
+
+                sparkTest.Start(); // starts the signal
+
+                // 100% reverse for 5s
+                //sparkTest.Duration = 5000;
+                sparkTest.Period(1000);
 
 
                 // This function has no loop. Relies on this loop periodically execute. 
