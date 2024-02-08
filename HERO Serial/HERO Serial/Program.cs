@@ -105,7 +105,8 @@ namespace HERO_Serial
 
                     serial.ReadFromSerial();
                     control.ReadAction(serial.decoded);
-                    control.GetStatus();
+                    // commented out to improve readability
+                    // control.GetStatus();
                     serial.SendBytes(control.dataOut);
                 }
             }
