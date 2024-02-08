@@ -1,11 +1,11 @@
 ﻿using CTRE.Phoenix.MotorControl.CAN;
-using Microsoft.SPOT.Hardware.PWM,
 using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
 using CTRE.Phoenix;
 using Microsoft.SPOT;
 using Microsoft.SPOT.Hardware;
 using System.Threading;
+
 
 namespace HERO_Serial
 {
@@ -50,11 +50,14 @@ namespace HERO_Serial
             var serial = new Serial();
 
             // Declaring pulse periods
-            uint period = 2000; // period between pulses, 2000 = forward, 1000 = backward (may actually be time duration)
-            uint duration = 5000; // pulse duration (ms) (may actually be pulse width)
+            uint period = 10000; // period of pwm signal (in microseconds).
+                                 // Sparkmax website specifies a frequency of 50-150Hz, so we used a period of 10ms
+            uint duration = 2000; // pulse duration (in microseconds) (pulse width)
 
             // Change Port and Pin accordingly
-            PWM sparkTest = new PWM(CTRE.HERO.IO.Port3.PWM_Pin9, period, duration, PWM.ScaleFactor.Microseconds, false);
+            PWM sparkTest = new PWM(CTRE.HERO.IO.Port3.PWM_Pin9, period, duration, PWM.ScaleFactor.Microseconds, false); 
+                // PWM.ScaleFactor.microseconds specifies the unit of time we're using
+
             // PWMSpeedController sparkMax = new PWMSpeedController(CTRE.HERO.IO.Port3.PWM_Pin9);
 
             sparkTest.Start(); // starts the signal
@@ -73,7 +76,7 @@ namespace HERO_Serial
 
                 // 100% reverse for 5s
                 //sparkTest.Duration = 5000;
-                sparkTest.Period(1000);
+                //sparkTest.Period = 1000;
 
 
                 // This function has no loop. Relies on this loop periodically execute. 
