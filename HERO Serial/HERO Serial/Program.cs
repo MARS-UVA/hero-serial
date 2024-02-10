@@ -11,8 +11,10 @@ namespace HERO_Serial
     public class Program
     {
         static readonly TalonSRX[] talons = new TalonSRX[8];
+        const bool DIRECT_DRIVE_ENABLED = true;
 
-        static Program() {
+        static Program()
+        {
             // New IDS:
             // 4-5: left wheels
             // 6-7: right wheels
@@ -52,25 +54,26 @@ namespace HERO_Serial
 
             while (true)
             {
-                serial.ReadFromSerial();
-                control.ReadAction(serial.decoded);
-                control.GetStatus();
-                serial.SendBytes(control.dataOut);
+                if (DIRECT_DRIVE_ENABLED)
+                {
+                    /*
+                     * Y - Raises the basket
+                     * A - Lowers the basket
+                     * Right stick should move the drivetrain
+                     */
+                    control.DirectUserControl(); // Direct control function
 
-
-                // This function has no loop. Relies on this loop periodically execute. 
-                // The old one had a while loop, so I'm not sure how it ever exited. 
-                //control.DirectUserControl(); // New direct control function
-
-                /*
-                 * Y - Raises the basket
-                 * A - Lowers the basket
-                 * Right stick should move the drivetrain
-                 */
-
-                //Thread.Sleep(10);
+                    Thread.Sleep(10);
+                }
+                else
+                {
+                    serial.ReadFromSerial();
+                    control.ReadAction(serial.decoded);
+                    control.GetStatus();
+                    serial.SendBytes(control.dataOut);
+                }
             }
-            
+
         }
     }
 }
