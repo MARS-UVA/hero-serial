@@ -63,6 +63,8 @@ namespace HERO_Serial
                      */
                     control.DirectUserControl(); // Direct control function
 
+                    control.ReadAction(serial.decoded);
+
                     Thread.Sleep(10);
                 }
                 else

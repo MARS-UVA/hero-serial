@@ -65,7 +65,7 @@ public class Drivetrain
 	public float[] GetCurrents(PowerDistributionPanel pdp)
     {
 		float[] currents = new float[4];
-		currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_FRONT_LEFT_TALON_ID);
+		currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_FRONT_LEFT_TALON_ID); // this might be printing pdp error?
 		currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_BACK_LEFT_TALON_ID);
 		currents[2] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_FRONT_RIGHT_TALON_ID);
 		currents[3] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_BACK_RIGHT_TALON_ID);
@@ -74,7 +74,10 @@ public class Drivetrain
 		//currents[2] = rightLeader.GetOutputCurrent();
 		//currents[3] = rightFollower.GetOutputCurrent();
 
-		Debug.Print(pdp.GetChannelCurrent(0).ToString());
+		// for motor current tests
+		Debug.Print(currents[0].ToString());
+		Debug.Print(currents[2].ToString());
+
 
 		return currents;
     }
@@ -106,7 +109,10 @@ public class Drivetrain
 	public void DirectDriveLeft(float power, float upperBound)
     {
 		if (enable) {
-			leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+			//leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+
+			// test code to identify correct Talon:
+			leftLeader.Set(ControlMode.PercentOutput, 0.5); // the talons with IDs 0 and 2 should light up
 		}
 		
     }
