@@ -74,9 +74,17 @@ public class Drivetrain
 		//currents[2] = rightLeader.GetOutputCurrent();
 		//currents[3] = rightFollower.GetOutputCurrent();
 
+
 		// for motor current tests
-		Debug.Print(currents[0].ToString());
-		Debug.Print(currents[2].ToString());
+		Debug.Print("CURRENT: " + currents[0].ToString());
+		Debug.Print("CURRENT: " + currents[1].ToString());
+		Debug.Print("CURRENT: " + currents[2].ToString());
+		Debug.Print("CURRENT: " + currents[3].ToString());
+		Debug.Print("PDP VOLTAGE: " + pdp.GetVoltage().ToString());
+
+
+
+
 
 
 		return currents;
@@ -109,10 +117,10 @@ public class Drivetrain
 	public void DirectDriveLeft(float power, float upperBound)
     {
 		if (enable) {
-			//leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+			leftLeader.Set(ControlMode.PercentOutput, 0.5);
 
 			// test code to identify correct Talon:
-			leftLeader.Set(ControlMode.PercentOutput, 0.5); // the talons with IDs 0 and 2 should light up
+			//leftLeader.Set(ControlMode.PercentOutput, 0.5); // the talons with IDs 0 and 2 should light up
 		}
 		
     }
