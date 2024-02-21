@@ -13,6 +13,7 @@ import struct
     # Y, H for bucket ladder chain driver
     # U, J for conveyor driver
     # I, K for deposit bin
+    # O, L for IR sensor
 #---------------------------------------------------------------------------#
 
 #-----------------------Protocol Bytes--------------------------------------#
@@ -52,6 +53,12 @@ bl_chain_forw = 150
 bl_chain_rev = 50
 #---------------------------------------------------------------------------#
 
+#-----------------------IR Sensor Motor Values----------------------------#
+ir_opcode = 48 # 01 001000, direct control, 8 data bytes
+# 01 001001, direct control, 9 data bytes
+ir_data = [0xF12A1674, 0x7A8F3D2E, 0xD4E7B9A2, 0x2F6D8A3C]
+angles = [0x65167315, 0x9B0C5A1F, 0x3E7A8F3D, 0x2E6D8A3C]
+#---------------------------------------------------------------------------#
 interpret_data_as_floats = True;
 
 EXIT = False
@@ -305,6 +312,14 @@ def on_press(key):
             instruction.append(calculate_checksum(instruction))     # checksum, 1127%256 = 103
             ser.write(instruction)
             print('stop')
+        elif key.char == 'o':
+            instruction = bytearray()
+            instruction.append(header)     # header, 255
+            instruction.append(direct_opcount)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
+            
+            instruction.append(calculate_checksum(instruction))     # checksum, 927%256 = 159
+            ser.write(instruction)
+            print('ir sensor')
     except AttributeError:
        pass
 
