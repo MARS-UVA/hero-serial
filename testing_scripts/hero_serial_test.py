@@ -54,10 +54,12 @@ bl_chain_rev = 50
 #---------------------------------------------------------------------------#
 
 #-----------------------IR Sensor Motor Values----------------------------#
-ir_opcode = 48 # 01 001000, direct control, 8 data bytes
-# 01 001001, direct control, 9 data bytes
+ir_opcode_payload = 0x44 # 01 000100, direct control, 4 data bytes
+ir_opcode_special = 0x41 # 01 000001, direct control, 1 data byte
 ir_data = [0xF12A1674, 0x7A8F3D2E, 0xD4E7B9A2, 0x2F6D8A3C]
 angles = [0x65167315, 0x9B0C5A1F, 0x3E7A8F3D, 0x2E6D8A3C]
+ir_start = 0xA0
+ir_stop = 0xA1
 #---------------------------------------------------------------------------#
 interpret_data_as_floats = True;
 
@@ -313,13 +315,34 @@ def on_press(key):
             ser.write(instruction)
             print('stop')
         elif key.char == 'o':
+            # send ir sensor start
             instruction = bytearray()
             instruction.append(header)     # header, 255
-            instruction.append(direct_opcount)     # opcode + count: 01 001000, direct control, 8 data bytes, 72
-            
-            instruction.append(calculate_checksum(instruction))     # checksum, 927%256 = 159
+            instruction.append(ir_opcode_special)   # opcode + count: 01 000001, direct control, 1 data byte
+            instruction.append(ir_start)     # start ir sensor
+            instruction.append(calculate_checksum(instruction))
             ser.write(instruction)
-            print('ir sensor')
+            print('ir sensor start')
+
+            # send ir sensor data
+            for i in range(ir_data.__len__()):
+                instruction = bytearray()
+                instruction.append(header)     # header, 255
+                instruction.append(ir_opcode_payload)   # opcode + count: 01 000100, direct control, 4 data bytes
+                instruction.append(ir_data[i])     # ir sensor data
+                instruction.append(calculate_checksum(instruction))
+                ser.write(instruction)
+                print('ir sensor data', i+1, '/', ir_data.__len__())
+
+            # send ir sensor stop
+            instruction = bytearray()
+            instruction.append(header)     # header, 255
+            instruction.append(ir_stop)     # stop ir sensor
+            instruction.append(ir_opcode_special)   # opcode + count: 01 000001, direct control, 1 data byte
+            instruction.append(ir_stop)     # stop ir sensor
+            instruction.append(calculate_checksum(instruction))
+            ser.write(instruction)
+            print('ir sensor stop')
     except AttributeError:
        pass
 
