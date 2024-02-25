@@ -51,28 +51,46 @@ namespace HERO_Serial
 
             //var gamepad = new LogitechGamepad(0);
 
+
+            // Electrical Test Code for any GPIO Input Port (confirm correct port/pin); Low voltage = False, High voltage = True, Disable ResistorMode Pullup
+            InputPort digitalIn1 = new InputPort(CTRE.HERO.IO.Port3.Pin5, false, Port.ResistorMode.Disabled);
+            Debug.Print("~~~~~ ELECTRICAL TEST CODE FOR GPIO INPUT PORT START ~~~~~");
+
             while (true)
             {
-                if (DIRECT_DRIVE_ENABLED)
+                serial.ReadFromSerial();
+                control.ReadAction(serial.decoded);
+                //control.GetStatus();//commented this line out for Electrical Test Code to improve console result readability
+                serial.SendBytes(control.dataOut);
+
+                // Electrical Test Code for any GPIO Input Port, reads voltage
+                bool testSignal = digitalIn1.Read();
+                Debug.Print("Input: " + testSignal.ToString());
+                if (testSignal == true)
                 {
-                    /*
-                     * Y - Raises the basket
-                     * A - Lowers the basket
-                     * Right stick should move the drivetrain
-                     */
-                    control.DirectUserControl(); // Direct control function
-                    
-                    Thread.Sleep(10);
+                    // High Voltage
+                    Debug.Print("\nVoltage: High");
                 }
-                else
+                else if (testSignal == false)
                 {
-                    serial.ReadFromSerial();
-                    control.ReadAction(serial.decoded);
-                    control.GetStatus();
-                    serial.SendBytes(control.dataOut);
+                    // Low Voltage
+                    Debug.Print("\nVoltage: Low");
                 }
+
+
+                // This function has no loop. Relies on this loop periodically execute. 
+                // The old one had a while loop, so I'm not sure how it ever exited. 
+                //control.DirectUserControl(); // New direct control function
+
+                /*
+                 * Y - Raises the basket
+                 * A - Lowers the basket
+                 * Right stick should move the drivetrain
+                 */
+
+                //Thread.Sleep(10);
             }
-            
+
         }
     }
 }
