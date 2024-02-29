@@ -75,10 +75,11 @@ public class Drivetrain
 		//currents[3] = rightFollower.GetOutputCurrent();
 
 
+		//Debug.Print("CURRENT 0: " + pdp.GetChannelCurrent(0).ToString());
 		// for motor current tests
 		for (int i = 0; i < 16; i++)
         {
-			Debug.Print("CURRENT "+ i.ToString() + ": " + pdp.GetChannelCurrent(0).ToString());
+			Debug.Print("CURRENT "+ i.ToString() + ": " + pdp.GetChannelCurrent(i).ToString());
 		}
 		Debug.Print("PDP VOLTAGE: " + pdp.GetVoltage().ToString());
 
