@@ -11,6 +11,10 @@ namespace HERO_Serial
     public class Program
     {
         static readonly TalonSRX[] talons = new TalonSRX[8];
+        const bool DIRECT_DRIVE_ENABLED = false;
+
+
+
 
         static Program() {
             // New IDS:
@@ -47,28 +51,59 @@ namespace HERO_Serial
             //var control = new Control(talons);
             var control = new Control();
             var serial = new Serial();
+            var gamepad = new LogitechGamepad(0)
+            var deposit = DepositSystem.getInstance();
+            var bucketLadder = BucketLadder().getInstance();
 
             //var gamepad = new LogitechGamepad(0);
 
             while (true)
             {
-                serial.ReadFromSerial();
-                control.ReadAction(serial.decoded);
-                control.GetStatus();
-                serial.SendBytes(control.dataOut);
+                if(DIRECT_DRIVE_ENABLED or (gamepad.IsRightShoulderPressed and gamepad.IsLeftShoulderPressed))
+                {
+                    /*
+                     * Y - Raises the basket
+                     * A - Lowers the basket
+                     * Right stick should move the drivetrain
+                     */
+                    if !(gamepad.IsYPressed and gamepad.IsAPressed) {
 
+                        if (gamepad.IsYPressed) {
+                            float[] basketAngles = bucketLadder.GetAngles();
+                            if (basketAngles[1] == 0.0 and(basketAngles[0] == 0.0)) {
+                                // move the bucket ladder first and then the basket and then stop at 90
+                                bucketLadder.HeightDirectControl()
+                                deposit.BasketLiftDirectControl(1f, 0.5f);
+                                if ((bucketLadder.GetAngles()[0] = 90.0) or(bucketLadder.GetAngles()[1] = 90.0)) {
+                                    bucketLadder.Stop()
+                                }
+                            }
+                        }
 
-                // This function has no loop. Relies on this loop periodically execute. 
-                // The old one had a while loop, so I'm not sure how it ever exited. 
-                //control.DirectUserControl(); // New direct control function
+                        if (gamepad.IsAPressed) {
+                            float[] basketAngles = bucketLadder.GetAngles();
+                            if (basketAngles[1] == 90.0 and(basketAngles[0] == 90.0)) {
+                                // move the basket motors to get it to be 90 degrees
+                                deposit.BasketLiftDirectControl(-1f, 0.5f);
+                                if ((bucketLadder.GetAngles()[0] = 0.0) or(bucketLadder.GetAngles()[1] = 0.0)) {
+                                    bucketLadder.Stop()
+                                }
+                                bucketLadder.HeightDirectControl()
+                            }
 
-                /*
-                 * Y - Raises the basket
-                 * A - Lowers the basket
-                 * Right stick should move the drivetrain
-                 */
+                        }
+                    }
+                    control.DirectUserControl(); // Direct control function
 
-                //Thread.Sleep(10);
+                    Thread.Sleep(10);
+                }
+                else
+                {
+                    serial.ReadFromSerial();
+                    control.ReadAction(serial.decoded);
+                    control.GetStatus();
+                    serial.SendBytes(control.dataOut);
+                }
             }
             
         }
