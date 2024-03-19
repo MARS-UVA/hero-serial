@@ -51,9 +51,34 @@ namespace HERO_Serial
 
             //var gamepad = new LogitechGamepad(0);
 
+            // Electrical Test Code for  GPIO Input Port: port 3 pin 5 (middle right port on HERO Hat)
+            InputPort digitalIn1 = new InputPort(CTRE.HERO.IO.Port3.Pin5, false, Port.ResistorMode.Disabled);
+
+            // port 3 pin 9(top right port on HERO Hat)
+            OutputPort digitalOut1 = new OutputPort(CTRE.HERO.IO.Port3.Pin9, false);
+
+
+
             while (true)
             {
-                if(DIRECT_DRIVE_ENABLED)
+                bool testSignal = digitalIn1.Read();
+                Debug.Print("Input: " + testSignal.ToString());
+                if (testSignal == true)
+                {
+                    //digitalOut1.Write(true); //turn LED on
+                    // High Voltage
+                    Debug.Print("\nVoltage: High");
+                }
+                else if (testSignal == false)
+                {
+                    //digitalOut1.Write(false); //turn LED off
+                    // Low Voltage
+                    Debug.Print("\nVoltage: Low");
+                }
+
+
+
+                if (testSignal)
                 {
                     /*
                      * Y - Raises the basket
