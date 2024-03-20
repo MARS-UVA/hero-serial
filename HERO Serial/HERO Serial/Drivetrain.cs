@@ -77,11 +77,10 @@ public class Drivetrain
 
 		//Debug.Print("CURRENT 0: " + pdp.GetChannelCurrent(0).ToString());
 		// for motor current tests
-		for (int i = 0; i < 16; i++)
-        {
-			Debug.Print("CURRENT "+ i.ToString() + ": " + pdp.GetChannelCurrent(i).ToString());
-		}
-		Debug.Print("PDP VOLTAGE: " + pdp.GetVoltage().ToString());
+		//for (int i = 0; i < 16; i++)
+        //{
+		//	Debug.Print("CURRENT "+ i.ToString() + ": " + pdp.GetChannelCurrent(i).ToString());
+		//}
 
 
 		return currents;
@@ -116,8 +115,6 @@ public class Drivetrain
 		if (enable) {
 			leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
 
-			// test code to identify correct Talon:
-			//leftLeader.Set(ControlMode.PercentOutput, 0.5); // the talons with IDs 0 and 2 should light up
 		}
 		
     }

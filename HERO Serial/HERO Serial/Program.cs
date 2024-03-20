@@ -62,9 +62,6 @@ namespace HERO_Serial
                      * Right stick should move the drivetrain
                      */
                     control.DirectUserControl(); // Direct control function
-
-                    control.GetStatus();
-
                     Thread.Sleep(10);
                 }
                 else
