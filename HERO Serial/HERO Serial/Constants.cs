@@ -22,7 +22,7 @@ public static class Constants
         DEPOSITSYSTEM_BASKET_LIFTER0_TALON_ID = 11, // left
         DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID = 10, // right
         DEPOSITSYSTEM_BASKET_FLIP_TALON_ID = 4,
-        PDP_ID = 61
+        PDP_ID = 62
     }
 
 
