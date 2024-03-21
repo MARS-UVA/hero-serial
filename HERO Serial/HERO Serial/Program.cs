@@ -11,7 +11,6 @@ namespace HERO_Serial
     public class Program
     {
         static readonly TalonSRX[] talons = new TalonSRX[8];
-        const bool DIRECT_DRIVE_ENABLED = false;
 
         static Program() {
             // New IDS:
@@ -61,25 +60,11 @@ namespace HERO_Serial
 
             while (true)
             {
-                bool testSignal = digitalIn1.Read();
-                Debug.Print("Input: " + testSignal.ToString());
-                if (testSignal == true)
+                bool isTestDrive = digitalIn1.Read();
+                if (isTestDrive)
                 {
-                    //digitalOut1.Write(true); //turn LED on
-                    // High Voltage
-                    Debug.Print("\nVoltage: High");
-                }
-                else if (testSignal == false)
-                {
-                    //digitalOut1.Write(false); //turn LED off
-                    // Low Voltage
-                    Debug.Print("\nVoltage: Low");
-                }
+                     digitalOut1.Write(true); //turn LED on
 
-
-
-                if (testSignal)
-                {
                     /*
                      * Y - Raises the basket
                      * A - Lowers the basket
@@ -91,6 +76,8 @@ namespace HERO_Serial
                 }
                 else
                 {
+                    digitalOut1.Write(false); // turn LED off
+
                     serial.ReadFromSerial();
                     control.ReadAction(serial.decoded);
                     control.GetStatus();
