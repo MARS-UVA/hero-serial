@@ -15,6 +15,10 @@ namespace HERO_Serial
         readonly PowerDistributionPanel pdp;
         
         public readonly byte[] dataOut;
+
+        // temp variable for POL
+        float steadyChainSpeed = 0f;
+        
         //readonly byte[] temp = new byte[4 * 3];
         // linear x, linear y, angular z
         //readonly float[] twist = new float[3];
@@ -72,7 +76,23 @@ namespace HERO_Serial
                 // Get input for the bucket ladder
                 float bucketHeight = gamepad.GetLeftY() * -1.0f;
                 float bucketExtension = gamepad.GetLeftX();
-                float bucketChain = -0.5f * (gamepad.GetRightTrigger() + 1.0f) + 0.5f * (gamepad.GetLeftTrigger() + 1.0f);
+                //float bucketChain = -0.5f * (gamepad.GetRightTrigger() + 1.0f) + 0.5f * (gamepad.GetLeftTrigger() + 1.0f);
+
+                // temporary code Austen added for POL
+                float bucketChain = 0f;
+                if (gamepad.IsBPressed()) // move bucket chain
+                {
+                    bucketChain = 0.4f;
+                }
+                else if (gamepad.IsXPressed()) // stop
+                {
+                    bucketChain =-0.4f;
+                }
+                else if (gamepad.IsBPressed() && gamepad.IsXPressed())
+                {
+                    bucketChain = 0f;
+                }
+
                 //Debug.Print("Left Y: " + bucketHeight.ToString());
                 //Debug.Print("Left X: " + bucketExtension.ToString());
                 //Debug.Print("Chain: " + bucketChain.ToString());
