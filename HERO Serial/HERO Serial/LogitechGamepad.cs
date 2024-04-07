@@ -44,11 +44,11 @@ class LogitechGamepad
     {
         return gamepad.GetAxis(3);
     }
-    public float GetLeftX()
+    public float GetLeftX() // Left joystick or left Dpad?
     {
         return gamepad.GetAxis(0);
     }
-    public float GetLeftY()
+    public float GetLeftY() // Left joystick or left Dpad?
     {
         return gamepad.GetAxis(1);
     }

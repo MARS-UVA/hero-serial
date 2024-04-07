@@ -60,7 +60,7 @@ namespace HERO_Serial
 
             while (true)
             {
-                bool isTestDrive = digitalIn1.Read();
+                bool isTestDrive = digitalIn1.Read(); // true by default
                 if (isTestDrive)
                 {
                      digitalOut1.Write(true); //turn LED on
