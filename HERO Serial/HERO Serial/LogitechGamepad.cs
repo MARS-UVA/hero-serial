@@ -28,11 +28,11 @@ class LogitechGamepad
     }
 
     // TODO: Check these are using the correct axis indecies
-    public float GetLeftTrigger()
+    public float GetLeftTrigger() // values: -1 (not pressed) to 1 (fully pressed)
     {
         return gamepad.GetAxis(4);
     }
-    public float GetRightTrigger()
+    public float GetRightTrigger() // values: -1 to 1
     {
         return gamepad.GetAxis(5);
     }
@@ -44,11 +44,11 @@ class LogitechGamepad
     {
         return gamepad.GetAxis(3);
     }
-    public float GetLeftX() // Left joystick or left Dpad?
+    public float GetLeftX() // Dpad X (values: 1, 0, or -1)
     {
         return gamepad.GetAxis(0);
     }
-    public float GetLeftY() // Left joystick or left Dpad?
+    public float GetLeftY() // Dpad Y (values: 1, 0, or -1)
     {
         return gamepad.GetAxis(1);
     }
@@ -85,12 +85,12 @@ class LogitechGamepad
     }
     
     // TODO: Confirm what button index this is
-    public bool IsLeftShoulderPressed()
+    public bool IsLeftShoulderPressed() // LB
     {
         return gamepad.GetButton(5);
     }
     // TODO: Confirm what button index this is
-    public bool IsRightShoulderPressed()
+    public bool IsRightShoulderPressed() // RB
     {
         return gamepad.GetButton(6);
     }
@@ -119,6 +119,9 @@ class LogitechGamepad
     {
         return gamepad.GetButton(10);
     }
+
+
+    // left joystick: buttons 13 (+Y), 14 (-X), 15(+X), 16 (-Y) -- not reliable
 
 
     

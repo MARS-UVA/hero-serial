@@ -14,22 +14,7 @@ namespace HERO_Serial
         readonly TalonSRX[] talons;
         readonly PowerDistributionPanel pdp;
         
-        public readonly byte[] dataOut;
-
-        // temp variable for POL
-        float steadyChainSpeed = 0f;
-        
-        //readonly byte[] temp = new byte[4 * 3];
-        // linear x, linear y, angular z
-        //readonly float[] twist = new float[3];
-        // arm angle potentiometer
-        //readonly AnalogInput pot1 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
-        // arm translation potentiometer
-        //readonly AnalogInput pot2 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
-        //readonly int minAngle = 30;
-        //readonly int maxAngle = 90;
-        //readonly int minTrans = 1;
-        //readonly int maxTrans = 10;
+        public readonly byte[] dataOut; // data sent back to Jetson, not needed currently
 
         //public Control(TalonSRX[] talons)
         //{
@@ -65,21 +50,21 @@ namespace HERO_Serial
                 var deposit = DepositSystem.getInstance();
 
                 // Get drive input from the right stick
-                float driveForwards = gamepad.GetRightY() * 0.50f;
-                float driveTurn = gamepad.GetRightX() * 0.50f;
-                //Debug.Print("Right Y: " + driveForwards.ToString());
-                //Debug.Print("Right X: " + driveTurn.ToString());
+                //float driveForwards = gamepad.GetRightY() * 0.5f;
+                //float driveTurn = gamepad.GetRightX() * 0.5f;
+                float driveForwards = (float) System.Math.Pow(gamepad.GetRightY(), 3.0f); // motor control is now a cubic function of joystick input
+                float driveTurn = (float)System.Math.Pow(gamepad.GetRightX(), 3.0f);
 
                 // Pass it to the drivetrain
                 drivetrain.DirectDrive(driveForwards, driveTurn, 1.0f);
 
                 // Get input for the bucket ladder
                 float bucketHeight = gamepad.GetLeftY();
-                float bucketExtension = gamepad.GetLeftX();
+                float bucketExtension = gamepad.GetLeftX(); // not used right now
                 //float bucketChain = -0.5f * (gamepad.GetRightTrigger() + 1.0f) + 0.5f * (gamepad.GetLeftTrigger() + 1.0f);
 
-                // temporary code Austen added for POL
-                float bucketChain = gamepad.GetRightTrigger() * 0.60f + (gamepad.GetLeftTrigger() *  -0.60f);
+                // temporary code Austen added for POL. Rotates bucket ladder based on analog input values from left and right triggers
+                float bucketChain = gamepad.GetRightTrigger() + (gamepad.GetLeftTrigger() *  -1.0f);
 
                 //Debug.Print("Left Y: " + bucketHeight.ToString());
                 //Debug.Print("Left X: " + bucketExtension.ToString());
@@ -87,10 +72,10 @@ namespace HERO_Serial
 
                 // Pass to the bucket ladder subsystem
                 bucketladder.HeightDirectControl(bucketHeight, 1.0f);
-                bucketladder.ExtendDirectControl(bucketExtension, 1.0f);
+                bucketladder.ExtendDirectControl(bucketExtension, 1.0f); // not used
                 bucketladder.ChainDirectControl(bucketChain, 1.0f);
 
-                // Get input for the basket
+                // Get input for construction bin actuator (used to be called basket)
                 // Y lifts the basket, A lowers it
                 // This has been tested
                 var basketLift = 0f;
@@ -100,17 +85,17 @@ namespace HERO_Serial
                 }
                 else if (gamepad.IsYPressed())
                 {
-                    basketLift = -1f;
+                    basketLift = 1f;
                 }
                 else if (gamepad.IsAPressed())
                 {
-                    basketLift = 1f;
+                    basketLift = -1f;
                 }
 
                 // Pass it to the Deposit subsytem
                 deposit.BasketLiftDirectControl(basketLift, 0.5f);
 
-                // Get input for the conveyor
+                /*// Get input for the conveyor 
                 // B moves towards deposit bin, X away
                 var conveyorSpeed = 0f;
                 if (gamepad.IsBPressed() && gamepad.IsXPressed())
@@ -127,7 +112,7 @@ namespace HERO_Serial
                 }
 
                 // Pass it to the Deposit subsytem
-                deposit.FlipperDirectControl(conveyorSpeed, 0.5f);
+                deposit.FlipperDirectControl(conveyorSpeed, 0.5f);*/
 
                 // Feed the watchdog so we don't timeout
                 CTRE.Phoenix.Watchdog.Feed();

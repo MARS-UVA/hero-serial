@@ -47,7 +47,10 @@ public class Drivetrain
 
 		// Put in brake mode
 		leftLeader.SetNeutralMode(NeutralMode.Brake);
-		leftLeader.SetNeutralMode(NeutralMode.Brake);
+		rightLeader.SetNeutralMode(NeutralMode.Brake);
+
+		leftLeader.ConfigOpenloopRamp(0.5f); // 0.25 seconds from neutral to full output (during open-loop control)
+		rightLeader.ConfigOpenloopRamp(0.5f); // 0.25 seconds from neutral to full output (during open-loop control)
 
 		enable = true;
 

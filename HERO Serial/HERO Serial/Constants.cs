@@ -10,19 +10,19 @@ public static class Constants
     // All static
     public enum CANID : int
     {
-        DRIVETRAIN_FRONT_LEFT_TALON_ID = 0,
-        DRIVETRAIN_FRONT_RIGHT_TALON_ID = 13,
-        DRIVETRAIN_BACK_LEFT_TALON_ID = 2,
-        DRIVETRAIN_BACK_RIGHT_TALON_ID = 16,
-        BUCKETLADDER_LIFTER0_TALON_ID = 15, // angle left
-        BUCKETLADDER_LIFTER1_TALON_ID = 14, // angle right
-        BUCKETLADDER_EXTENDER1_TALON_ID = 10, // translation
-        BUCKETLADDER_EXTENDER2_TALON_ID = 11, // translation
-        BUCKETLADDER_CHAIN_DRIVER_TALON_ID = 4,
-        DEPOSITSYSTEM_BASKET_LIFTER0_TALON_ID = 3, // left
-        DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID = 1, // right
-        DEPOSITSYSTEM_BASKET_FLIP_TALON_ID = 12,
-        PDP_ID = 62
+        DRIVETRAIN_FRONT_LEFT_TALON_ID = 0, // front left wheel
+        DRIVETRAIN_FRONT_RIGHT_TALON_ID = 13, // front right wheel
+        DRIVETRAIN_BACK_LEFT_TALON_ID = 2, // back left wheel
+        DRIVETRAIN_BACK_RIGHT_TALON_ID = 16, // back right wheel
+        BUCKETLADDER_LIFTER0_TALON_ID = 15, // bucket ladder left actuator
+        BUCKETLADDER_LIFTER1_TALON_ID = 14, // bucket ladder right actuator
+        BUCKETLADDER_EXTENDER1_TALON_ID = 10, // Not used
+        BUCKETLADDER_EXTENDER2_TALON_ID = 11, // Not used
+        BUCKETLADDER_CHAIN_DRIVER_TALON_ID = 4, // bucket ladder chain motor
+        DEPOSITSYSTEM_BASKET_LIFTER0_TALON_ID = 3, // construction bin actuator
+        DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID = 1, // not on robot
+        DEPOSITSYSTEM_BASKET_FLIP_TALON_ID = 12, // not on robot
+        PDP_ID = 62 
     }
 
 
