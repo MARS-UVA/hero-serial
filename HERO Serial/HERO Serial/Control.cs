@@ -14,7 +14,7 @@ namespace HERO_Serial
         readonly TalonSRX[] talons;
         readonly PowerDistributionPanel pdp;
         
-        public readonly byte[] dataOut; // data sent back to Jetson, not needed currently
+        public readonly byte[] dataOut; // data sent back to Jetson, used to send motor current readings
 
         //public Control(TalonSRX[] talons)
         //{
@@ -414,7 +414,8 @@ namespace HERO_Serial
             // 2 limit switches
             // 13 floats + 2 bytes = 54 bytes
             Utils.EncodeFloatToByteArray(Drivetrain.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 0);
-            Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 16);
+            // only this line is useful. The 16-19th bytes is the current reading from the bucket ladder motor
+            Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 16); 
             Utils.EncodeFloatToByteArray(DepositSystem.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 32);
             Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetAngles()).CopyTo(dataOut, 44);
             DepositSystem.getInstance().GetSwitches().CopyTo(dataOut, 52);

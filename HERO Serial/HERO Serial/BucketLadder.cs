@@ -5,6 +5,7 @@ using CTRE.Phoenix.Sensors;
 using CTRE.Phoenix;
 using HERO_Serial;
 using Microsoft.SPOT.Hardware;
+using Microsoft.SPOT;
 
 /**
  * This is a class to represent the BucketLadder subsystem
@@ -24,6 +25,7 @@ public class BucketLadder
     // static readonly AnalogInput pot0 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin3);
     // static readonly AnalogInput pot1 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
     static readonly InputPort loweredSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin3, false, Port.ResistorMode.Disabled);
+
 
     private BucketLadder()
     {
@@ -53,14 +55,22 @@ public class BucketLadder
 
     public float[] GetCurrents(PowerDistributionPanel pdp)
     {
-        float[] currents = new float[4];
-        currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_LIFTER0_TALON_ID);
-        currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_LIFTER1_TALON_ID);
-        currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_EXTENDER1_TALON_ID);
-        currents[2] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_CHAIN_DRIVER_TALON_ID);
+        float[] currents = new float[1];
+        //currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_LIFTER0_TALON_ID);
+        //currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_LIFTER1_TALON_ID);
+        //currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_EXTENDER1_TALON_ID);
+
+        // change argument to PDP channel number instead of CAN ID
+        currents[0] = pdp.GetChannelCurrent(7);
+        Debug.Print("Bucket ladder current: " + currents[0]);
         //currents[0] = ladderLifter.GetOutputCurrent();
         //currents[1] = ladderExtender.GetOutputCurrent();
         //currents[2] = chainDriver.GetOutputCurrent();
+
+        if (currents[0] > 60) // stop everything if current exceeds 60A.
+        {
+            Stop();
+        }
 
         return currents;
     }
@@ -130,6 +140,7 @@ public class BucketLadder
     // Gives a percent output to the chain control motor(s)
     public void ChainDirectControl(float power, float upperBound)
     {
+        
         if (enable)
         {
             chainDriver.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));

@@ -40,6 +40,7 @@ namespace HERO_Serial
             while (true)
             {
                 bool isTestDrive = digitalIn1.Read(); // default is set to true by a pull-up resistor
+                //bool isTestDrive = false;
 
                 if (isTestDrive)
                 {
