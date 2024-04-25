@@ -195,6 +195,10 @@ namespace HERO_Serial
                         // but it maintains modularity (I think)
                         byte byteCommand = decoded[i + 1];
                         float command = ((int)byteCommand - 100) / 100.0f; // from old code. Handles negatives?
+                        if (i >= 7)
+                        {
+                            command = byteCommand;
+                        }
                         //Debug.Print("Command: " + command.ToString());
                         if (talonIterator.MoveNext()) // must be called before Current
                         {
@@ -235,20 +239,17 @@ namespace HERO_Serial
                                     Debug.Print("BL angle: " + command.ToString());
                                     break;
                                 case 5:
-                                    bucketladder.ExtendDirectControl(command, upperbound);
-                                    Debug.Print("BL trans: " + command.ToString());
-                                    break;
-                                case 6:
                                     bucketladder.ChainDirectControl(command, upperbound);
                                     Debug.Print("BL chain: " + command.ToString());
                                     break;
-                                case 7:
+                                case 6:
                                     deposit.BasketLiftDirectControl(command, upperbound);
                                     Debug.Print("DB angle: " + command.ToString());
                                     break;
-                                case 8:
-                                    deposit.FlipperDirectControl(command, upperbound);
-                                    Debug.Print("Conveyor: " + command.ToString());
+                                case 7: 
+                                    // TODO: servo control code
+                                    deposit.ServoDirectControl(command);
+                                    Debug.Print("Servo Angle: " + command.ToString());
                                     break;
                                 default:
                                     // Do nothing
@@ -420,7 +421,7 @@ namespace HERO_Serial
             Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetAngles()).CopyTo(dataOut, 44);
             DepositSystem.getInstance().GetSwitches().CopyTo(dataOut, 52);
             BucketLadder.getInstance().GetSwitches().CopyTo(dataOut, 53);
-            Debug.Print("DEPOSIT BIN RAISED: " + dataOut[52] + ", BUCKET LADDER LOWERED: " + dataOut[53]);
+            //Debug.Print("DEPOSIT BIN RAISED: " + dataOut[52] + ", BUCKET LADDER LOWERED: " + dataOut[53]);
             // Keeping this...
             // arm angle
             //val = pot1.Read();

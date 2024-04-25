@@ -4,6 +4,7 @@ using HERO_Serial;
 using CTRE.Phoenix;
 using Microsoft.SPOT.Hardware;
 using System;
+using Microsoft.SPOT;
 
 /**
  * This is a class to represent the Deposit subsystem. It includes the basket and conveyor system (if that happens)
@@ -17,6 +18,7 @@ class DepositSystem
     private readonly TalonSRX basketLifter1;
     private readonly TalonSRX basketFlipper;
     private bool enable;
+    readonly PWM servoTest = new PWM(CTRE.HERO.IO.Port3.PWM_Pin9, 10000, 500, PWM.ScaleFactor.Microseconds, false); // period: 10000, duration: 500
     static readonly InputPort topSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin4, false, Port.ResistorMode.Disabled);
     // static readonly InputPort botSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin3, false, Port.ResistorMode.Disabled);
 
@@ -26,6 +28,8 @@ class DepositSystem
         basketLifter1 = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID);
         basketFlipper = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_FLIP_TALON_ID);
         enable = true;
+
+        servoTest.Start(); // starts the signal
     }
 
     public static DepositSystem getInstance()
@@ -41,10 +45,16 @@ class DepositSystem
     public float[] GetCurrents(PowerDistributionPanel pdp)
     {
         float[] currents = new float[3];
-        currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER0_TALON_ID);
+        currents[0] = pdp.GetChannelCurrent(11); // construction bin
         currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID);
         currents[2] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_FLIP_TALON_ID);
         //currents[0] = basketLifter.GetOutputCurrent();
+
+
+        if (currents[0] > 60) // stop everything if current exceeds 60A.
+        {
+            Stop();
+        }
 
         return currents;
     }
@@ -91,6 +101,19 @@ class DepositSystem
         if (enable)
         {
             basketFlipper.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+        }
+    }
+
+    public void ServoDirectControl(float angle)
+    {
+        //if (servoTest.Duration <= 2500)
+        //{
+        //    servoTest.Duration += 1;
+        //} 
+        //Debug.Print(servoTest.Duration.ToString());
+        if (angle <= 270 && angle >= 0)
+        {
+            servoTest.Duration = (uint) (angle / 270 * 2000 + 500);
         }
     }
 }

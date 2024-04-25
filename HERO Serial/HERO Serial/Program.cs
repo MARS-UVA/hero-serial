@@ -33,9 +33,9 @@ namespace HERO_Serial
 
             // GPIO output port for turning on LED: 3 pin 9(top right port on HERO Hat)
             // LED is on for test drive, off for production drive
-            OutputPort digitalOut1 = new OutputPort(CTRE.HERO.IO.Port3.Pin9, false);
+            //OutputPort digitalOut1 = new OutputPort(CTRE.HERO.IO.Port3.Pin9, false);
 
-
+            var deposit = DepositSystem.getInstance();
 
             while (true)
             {
@@ -44,7 +44,7 @@ namespace HERO_Serial
 
                 if (isTestDrive)
                 {
-                     digitalOut1.Write(true); // turn LED on
+                    //digitalOut1.Write(true); // turn LED on
 
                     /*
                      * Y - Raises construction bin
@@ -56,7 +56,10 @@ namespace HERO_Serial
                 }
                 else
                 {
-                    digitalOut1.Write(false); // turn LED off
+                    deposit.ServoDirectControl(100);
+
+                    //digitalOut1.Write(false); // turn LED off
+
 
                     serial.ReadFromSerial();
                     control.ReadAction(serial.decoded);

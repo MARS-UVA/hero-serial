@@ -68,10 +68,10 @@ public class Drivetrain
 	public float[] GetCurrents(PowerDistributionPanel pdp)
     {
 		float[] currents = new float[4];
-		currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_FRONT_LEFT_TALON_ID);
-		currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_BACK_LEFT_TALON_ID);
-		currents[2] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_FRONT_RIGHT_TALON_ID);
-		currents[3] = pdp.GetChannelCurrent((int)Constants.CANID.DRIVETRAIN_BACK_RIGHT_TALON_ID);
+		currents[0] = pdp.GetChannelCurrent(12);
+		currents[1] = pdp.GetChannelCurrent(2);
+		currents[2] = pdp.GetChannelCurrent(13);
+		currents[3] = pdp.GetChannelCurrent(3);
 		//currents[0] = leftLeader.GetOutputCurrent();
 		//currents[1] = leftFollower.GetOutputCurrent();
 		//currents[2] = rightLeader.GetOutputCurrent();
@@ -81,7 +81,7 @@ public class Drivetrain
         {
 			Stop();
         }
-		Debug.Print(pdp.GetChannelCurrent(0).ToString());
+		//Debug.Print(pdp.GetChannelCurrent(0).ToString());
 
 		return currents;
     }
