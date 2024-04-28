@@ -67,7 +67,7 @@ public class BucketLadder
 
         Debug.Print("Bucket ladder current: " + currents[0]);
 
-        if (currents[0] > 60 || currents[1] > 60 || currents[2] > 60) // stop everything if current exceeds 60A.
+        if (currents[0] > 130 || currents[1] > 60 || currents[2] > 60) // stop everything if current exceeds 60A.
         {
             Stop();
         }
