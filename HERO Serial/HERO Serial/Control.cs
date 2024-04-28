@@ -31,7 +31,7 @@ namespace HERO_Serial
             // 2 bucket ladder angles
             // 2 limit switches
             // 13 floats + 2 bytes = 54 bytes
-            dataOut = new byte[54]; // TODO: this probably needs to be something else
+            dataOut = new byte[28]; // TODO: this probably needs to be something else
             pdp = new PowerDistributionPanel((int)Constants.CANID.PDP_ID);
         }
 
@@ -74,6 +74,7 @@ namespace HERO_Serial
                 bucketladder.HeightDirectControl(bucketHeight, 1.0f);
                 bucketladder.ExtendDirectControl(bucketExtension, 1.0f); // not used
                 bucketladder.ChainDirectControl(bucketChain, 1.0f);
+                //bucketladder.GetCurrents(pdp);
 
                 // Get input for construction bin actuator (used to be called basket)
                 // Y lifts the basket, A lowers it
@@ -409,18 +410,15 @@ namespace HERO_Serial
             //    dataOut[i] = (byte)(talons[i].GetOutputCurrent() * 4);
             // NEW WAY:
             // 4 drivetrain currents
-            // 4 bucket ladder currents
-            // 3 deposit system currents
-            // 2 bucket ladder angles
-            // 2 limit switches
-            // 13 floats + 2 bytes = 54 bytes
+            // 3 bucket ladder currents
+            // 7 floats = 28 bytes
+            // Each motor current is a float (4 bytes)
+            // the 1st-16th bytes are the current readings from the wheel motors (front left, front right, back left. back right)
             Utils.EncodeFloatToByteArray(Drivetrain.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 0);
-            // only this line is useful. The 16-19th bytes is the current reading from the bucket ladder motor
+            //The 16-27th bytes are the current readings from the bucket ladder (chain: 16-19, left actuator: 20-23, right actuator: 24-27)
             Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 16); 
-            Utils.EncodeFloatToByteArray(DepositSystem.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 32);
-            Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetAngles()).CopyTo(dataOut, 44);
-            DepositSystem.getInstance().GetSwitches().CopyTo(dataOut, 52);
-            BucketLadder.getInstance().GetSwitches().CopyTo(dataOut, 53);
+
+
             //Debug.Print("DEPOSIT BIN RAISED: " + dataOut[52] + ", BUCKET LADDER LOWERED: " + dataOut[53]);
             // Keeping this...
             // arm angle

@@ -61,14 +61,11 @@ public class BucketLadder
         //currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_EXTENDER1_TALON_ID);
 
         // change argument to PDP channel number instead of CAN ID
-        currents[0] = pdp.GetChannelCurrent(7); // chain
+        currents[0] = pdp.GetChannelCurrent(4); // chain
         currents[1] = pdp.GetChannelCurrent(15); // bucket ladder left
         currents[2] = pdp.GetChannelCurrent(1); // bucket ladder right
 
-        //Debug.Print("Bucket ladder current: " + currents[0]);
-        //currents[0] = ladderLifter.GetOutputCurrent();
-        //currents[1] = ladderExtender.GetOutputCurrent();
-        //currents[2] = chainDriver.GetOutputCurrent();
+        Debug.Print("Bucket ladder current: " + currents[0]);
 
         if (currents[0] > 60 || currents[1] > 60 || currents[2] > 60) // stop everything if current exceeds 60A.
         {
