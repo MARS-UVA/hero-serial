@@ -55,19 +55,19 @@ public class BucketLadder
 
     public float[] GetCurrents(PowerDistributionPanel pdp)
     {
-        float[] currents = new float[3];
+        float[] currents = new float[2];
         //currents[0] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_LIFTER0_TALON_ID);
         //currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_LIFTER1_TALON_ID);
         //currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.BUCKETLADDER_EXTENDER1_TALON_ID);
 
         // change argument to PDP channel number instead of CAN ID
-        currents[0] = pdp.GetChannelCurrent(4); // chain
-        currents[1] = pdp.GetChannelCurrent(15); // bucket ladder left
-        currents[2] = pdp.GetChannelCurrent(1); // bucket ladder right
+        currents[0] = pdp.GetChannelCurrent(15); // bucket ladder left
+        currents[1] = pdp.GetChannelCurrent(4); // chain
+        //currents[2] = pdp.GetChannelCurrent(1); // bucket ladder right
 
         Debug.Print("Bucket ladder current: " + currents[0]);
 
-        if (currents[0] > 130 || currents[1] > 60 || currents[2] > 60) // stop everything if current exceeds 60A.
+        if (currents[0] > 60 || currents[1] > 100) // stop everything if current exceeds 60A.
         {
             Stop();
         }

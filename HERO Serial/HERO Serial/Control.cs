@@ -413,11 +413,12 @@ namespace HERO_Serial
             // 3 bucket ladder currents
             // 7 floats = 28 bytes
             // Each motor current is a float (4 bytes)
-            // the 1st-16th bytes are the current readings from the wheel motors (front left, front right, back left. back right)
+            // the 0-15th bytes are the current readings from the wheel motors (front left, front right, back left. back right)
             Utils.EncodeFloatToByteArray(Drivetrain.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 0);
-            //The 16-27th bytes are the current readings from the bucket ladder (chain: 16-19, left actuator: 20-23, right actuator: 24-27)
-            Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 16); 
-
+            //The 16-23rd bytes are the current readings from the bucket ladder (left actuator: 16-19, chain: 20-23)
+            Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 16);
+            // 24th to 27th bytes is the current reading from the construction bin actuator
+            Utils.EncodeFloatToByteArray(DepositSystem.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 24);
 
             //Debug.Print("DEPOSIT BIN RAISED: " + dataOut[52] + ", BUCKET LADDER LOWERED: " + dataOut[53]);
             // Keeping this...

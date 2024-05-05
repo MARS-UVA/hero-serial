@@ -44,10 +44,10 @@ class DepositSystem
 
     public float[] GetCurrents(PowerDistributionPanel pdp)
     {
-        float[] currents = new float[3];
+        float[] currents = new float[1];
         currents[0] = pdp.GetChannelCurrent(11); // construction bin
-        currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID);
-        currents[2] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_FLIP_TALON_ID);
+        //currents[1] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_LIFTER1_TALON_ID);
+        //currents[2] = pdp.GetChannelCurrent((int)Constants.CANID.DEPOSITSYSTEM_BASKET_FLIP_TALON_ID);
         //currents[0] = basketLifter.GetOutputCurrent();
 
 
