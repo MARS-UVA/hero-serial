@@ -56,7 +56,8 @@ namespace HERO_Serial
                 }
                 else
                 {
-                    deposit.ServoDirectControl(100);
+                    deposit.IRServoDirectControl(270);
+                    deposit.WebcamServoDirectControl(0);
 
                     //digitalOut1.Write(false); // turn LED off
 
@@ -64,6 +65,13 @@ namespace HERO_Serial
                     serial.ReadFromSerial();
                     control.ReadAction(serial.decoded);
                     control.GetStatus();
+
+                    // todo: delete debug code 
+                    //Debug.Print("length:" + control.dataOut.Length.ToString());
+                    //for (int i = 0; i < control.dataOut.Length; i++)
+                    //{
+                    //    Debug.Print("Byte " + i + ": " + control.dataOut[i]);
+                    //}
                     serial.SendBytes(control.dataOut);
                 }
             }

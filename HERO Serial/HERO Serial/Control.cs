@@ -248,9 +248,14 @@ namespace HERO_Serial
                                     Debug.Print("DB angle: " + command.ToString());
                                     break;
                                 case 7: 
-                                    // TODO: servo control code
-                                    deposit.ServoDirectControl(command);
-                                    Debug.Print("Servo Angle: " + command.ToString());
+                                    // IR sensor servo
+                                    deposit.IRServoDirectControl(command);
+                                    Debug.Print("IR Servo Angle: " + command.ToString());
+                                    break;
+                                case 8:
+                                    // Webcam sensor servo
+                                    deposit.WebcamServoDirectControl(command);
+                                    Debug.Print("Webcam Servo Angle: " + command.ToString());
                                     break;
                                 default:
                                     // Do nothing

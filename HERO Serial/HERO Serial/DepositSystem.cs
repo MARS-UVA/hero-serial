@@ -18,7 +18,9 @@ class DepositSystem
     private readonly TalonSRX basketLifter1;
     private readonly TalonSRX basketFlipper;
     private bool enable;
-    readonly PWM servoTest = new PWM(CTRE.HERO.IO.Port3.PWM_Pin9, 10000, 500, PWM.ScaleFactor.Microseconds, false); // period: 10000, duration: 500
+    readonly PWM IRServo = new PWM(CTRE.HERO.IO.Port3.PWM_Pin9, 10000, 500, PWM.ScaleFactor.Microseconds, false); // period: 10000, duration: 500
+    readonly PWM WebcamServo = new PWM(CTRE.HERO.IO.Port3.PWM_Pin8, 10000, 500, PWM.ScaleFactor.Microseconds, false); // period: 10000, duration: 500
+
     static readonly InputPort topSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin4, false, Port.ResistorMode.Disabled);
     // static readonly InputPort botSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin3, false, Port.ResistorMode.Disabled);
 
@@ -29,7 +31,8 @@ class DepositSystem
         basketFlipper = new TalonSRX((int)Constants.CANID.DEPOSITSYSTEM_BASKET_FLIP_TALON_ID);
         enable = true;
 
-        servoTest.Start(); // starts the signal
+        IRServo.Start(); // starts sending pwm to servo
+        WebcamServo.Start();
     }
 
     public static DepositSystem getInstance()
@@ -104,16 +107,23 @@ class DepositSystem
         }
     }
 
-    public void ServoDirectControl(float angle)
+    public void IRServoDirectControl(float angle)
     {
-        //if (servoTest.Duration <= 2500)
+        //if (IRServo.Duration <= 2500)
         //{
-        //    servoTest.Duration += 1;
+        //    IRServo.Duration += 1;
         //} 
-        //Debug.Print(servoTest.Duration.ToString());
+        //Debug.Print(IRServo.Duration.ToString());
         if (angle <= 270 && angle >= 0)
         {
-            servoTest.Duration = (uint) (angle / 270 * 2000 + 500);
+            IRServo.Duration = (uint) (angle / 270 * 2000 + 500);
+        }
+    }
+    public void WebcamServoDirectControl(float angle)
+    {
+        if (angle <= 270 && angle >= 0)
+        {
+            WebcamServo.Duration = (uint)(angle / 270 * 2000 + 500);
         }
     }
 }
