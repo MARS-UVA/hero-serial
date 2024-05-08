@@ -20,6 +20,8 @@ public class Drivetrain
 	private readonly TalonSRX rightLeader;
 	private readonly TalonSRX rightFollower;
 	private bool enable;
+	private float prevLeftPower;
+	private float prevRightPower;
 
 	private Drivetrain()
 	{
@@ -48,9 +50,13 @@ public class Drivetrain
 		// Put in brake mode
 		leftLeader.SetNeutralMode(NeutralMode.Brake);
 		rightLeader.SetNeutralMode(NeutralMode.Brake);
+		leftFollower.SetNeutralMode(NeutralMode.Brake);
+		rightFollower.SetNeutralMode(NeutralMode.Brake);
 
-		leftLeader.ConfigOpenloopRamp(0.5f); // 0.5 seconds from neutral to full output (during open-loop control)
-		rightLeader.ConfigOpenloopRamp(0.5f); // 0.5 seconds from neutral to full output (during open-loop control)
+		leftLeader.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
+		rightLeader.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
+		leftFollower.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
+		rightFollower.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
 
 		enable = true;
 
@@ -112,17 +118,39 @@ public class Drivetrain
 
 	public void DirectDriveLeft(float power, float upperBound)
     {
+		if (System.Math.Abs(power) < System.Math.Abs(prevLeftPower)) // when decelerating, ramp down speed immediately (within 0.1s)
+        {
+			leftLeader.ConfigOpenloopRamp(0.1f);
+			leftFollower.ConfigOpenloopRamp(0.1f);
+		}
+		else if (System.Math.Abs(power) > System.Math.Abs(prevLeftPower)) // when accelerating, ramp up speed gradually (0.5s)
+        {
+			leftLeader.ConfigOpenloopRamp(0.5f);
+			leftFollower.ConfigOpenloopRamp(0.5f);
+		}
 		if (enable) {
 			leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+			prevLeftPower = power;
 		}
 		
     }
 
 	public void DirectDriveRight(float power, float upperBound)
 	{
+		if (System.Math.Abs(power) < System.Math.Abs(prevRightPower)) // when decelerating, ramp down speed immediately (within 0.1s)
+		{
+			rightLeader.ConfigOpenloopRamp(0.1f);
+			rightFollower.ConfigOpenloopRamp(0.1f);
+		}
+		else if (System.Math.Abs(power) > System.Math.Abs(prevRightPower)) // when accelerating, ramp up speed gradually (0.5s)
+		{
+			rightLeader.ConfigOpenloopRamp(0.5f);
+			rightFollower.ConfigOpenloopRamp(0.5f);
+		}
 		if (enable)
         {
 			rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
+			prevRightPower = power;
 		}
 		
 	}

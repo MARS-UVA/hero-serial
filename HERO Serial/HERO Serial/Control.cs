@@ -216,7 +216,7 @@ namespace HERO_Serial
                              * basket flipper
                              */
                             float upperbound = 1.0f;
-                            float drivetrainScale = 0.5f;
+                            float drivetrainScale = 1.0f;
                             switch(i)
                             {
                                 case 0:
