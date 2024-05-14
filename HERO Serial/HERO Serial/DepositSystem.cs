@@ -117,6 +117,7 @@ class DepositSystem
         if (angle <= 270 && angle >= 0)
         {
             IRServo.Duration = (uint) (angle / 270 * 2000 + 500);
+            Debug.Print("ir servo" + IRServo.Duration.ToString());
         }
     }
     public void WebcamServoDirectControl(float angle)
@@ -124,6 +125,8 @@ class DepositSystem
         if (angle <= 270 && angle >= 0)
         {
             WebcamServo.Duration = (uint)(angle / 270 * 2000 + 500);
+            Debug.Print("webcam servo" + WebcamServo.Duration.ToString());
+
         }
     }
 }

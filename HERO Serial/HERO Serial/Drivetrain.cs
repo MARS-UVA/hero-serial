@@ -4,8 +4,9 @@ using CTRE.Phoenix.MotorControl;
 using CTRE.Phoenix.Sensors;
 using CTRE.Phoenix;
 using HERO_Serial;
-using System;
+using System.Threading;
 using Microsoft.SPOT;
+
 
 /**
  * This is a class to represent the Drivetrain subsystem
@@ -22,6 +23,24 @@ public class Drivetrain
 	private bool enable;
 	private float prevLeftPower;
 	private float prevRightPower;
+
+	private float[] prevW1Currents;
+	private float[] prevW2Currents;
+	private float[] prevW3Currents;
+	private float[] prevW4Currents;
+
+	private int arrayLen = 20;
+	private int currentIter;
+	private float W1Sum = 0;
+	private float W2Sum = 0;
+	private float W3Sum = 0;
+	private float W4Sum = 0;
+	private int maxCurrent = 80;
+
+	private float[] prevBLCurrents;
+	private float BLSum = 0;
+	private int maxTotalCurrent = 130;
+
 
 	private Drivetrain()
 	{
@@ -59,7 +78,12 @@ public class Drivetrain
 		rightFollower.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
 
 		enable = true;
-
+		//notStallStartTime = 0;
+		prevW1Currents = new float[arrayLen];
+		prevW2Currents = new float[arrayLen];
+		prevW3Currents = new float[arrayLen];
+		prevW4Currents = new float[arrayLen];
+		prevBLCurrents = new float[arrayLen];
 	}
 
 	public static Drivetrain getInstance()
@@ -78,30 +102,91 @@ public class Drivetrain
 		currents[1] = pdp.GetChannelCurrent(13); // front right
 		currents[2] = pdp.GetChannelCurrent(2); // back left
 		currents[3] = pdp.GetChannelCurrent(3); // back right
-		//currents[0] = leftLeader.GetOutputCurrent();
-		//currents[1] = leftFollower.GetOutputCurrent();
-		//currents[2] = rightLeader.GetOutputCurrent();
-		//currents[3] = rightFollower.GetOutputCurrent();
 
-		if (currents[0] > 60 || currents[1] > 60 || currents[2] > 60 || currents[3] > 60) // stop motors if current exceeds 60A
+		currents[0] = 50f;
+
+		float bucketladderCurrent = pdp.GetChannelCurrent(4);
+
+		currentIter += 1;
+		if (currentIter == arrayLen)
         {
-			Stop();
+			currentIter = 0;
         }
-		//Debug.Print(pdp.GetChannelCurrent(0).ToString());
+
+		W1Sum += (currents[0] - prevW1Currents[currentIter]);
+		W2Sum += (currents[1] - prevW2Currents[currentIter]);
+		W3Sum += (currents[2] - prevW3Currents[currentIter]);
+		W4Sum += (currents[3] - prevW4Currents[currentIter]);
+		prevW1Currents[currentIter] = currents[0];
+		prevW2Currents[currentIter] = currents[1];
+		prevW3Currents[currentIter] = currents[2];
+		prevW4Currents[currentIter] = currents[3];
+
+		BLSum += (bucketladderCurrent - prevBLCurrents[currentIter]);
+		prevBLCurrents[currentIter] = bucketladderCurrent;
+
+		// if avg current for any of the wheels > maxCurrent, stop robot's drivetrain
+		if (W1Sum > maxCurrent * arrayLen || W2Sum > maxCurrent * arrayLen || W3Sum > maxCurrent * arrayLen || W4Sum > maxCurrent * arrayLen)
+		{
+			// stop everything, and wait for 2 seconds to reset
+			Stop();
+			Debug.Print("STOPPING");
+			Thread.Sleep(2000);
+			enable = true;
+
+			// reset sum values
+			W1Sum = 0;
+			W2Sum = 0;
+			W3Sum = 0;
+			W4Sum = 0;
+			prevW1Currents = new float[arrayLen];
+			prevW2Currents = new float[arrayLen];
+			prevW3Currents = new float[arrayLen];
+			prevW4Currents = new float[arrayLen];
+
+		}
+		// if avg current of all motors exceed maxTotalCurrent, shut down robot's drivetrain
+		else if ((W1Sum + W2Sum + W3Sum + W4Sum + BLSum) > maxTotalCurrent * arrayLen)
+		{
+			Stop();
+			Thread.Sleep(2000);
+			enable = true;
+
+			// reset sum values
+			W1Sum = 0;
+			W2Sum = 0;
+			W3Sum = 0;
+			W4Sum = 0;
+			prevW1Currents = new float[arrayLen];
+			prevW2Currents = new float[arrayLen];
+			prevW3Currents = new float[arrayLen];
+			prevW4Currents = new float[arrayLen];
+			BLSum = 0;
+			prevBLCurrents = new float[arrayLen];
+
+
+		}
 
 		return currents;
     }
 
+	public float[] GetAvgCurrents()
+    {
+		float [] avgCurrents = new float[] { 100f, 100f, W3Sum, W4Sum, BLSum };
+		Debug.Print(avgCurrents);
+		return avgCurrents;
+    }
+
 	// Quick function to stop all the motors
 	public void Stop()
-    {
+	{
 		DirectDrive(0.0f, 0.0f, 0.0f);
 		// I think this will disable those motors. May need to explicitly enabled
 		leftLeader.Set(ControlMode.PercentOutput, 0.0f);
 		rightLeader.Set(ControlMode.PercentOutput, 0.0f);
 		// Maybe does something? 
-		leftLeader.Set(ControlMode.Disabled, 0.0f);
-		leftLeader.Set(ControlMode.Disabled, 0.0f);
+		//leftLeader.Set(ControlMode.Disabled, 0.0f);
+		//leftLeader.Set(ControlMode.Disabled, 0.0f);
 		enable = false;
 	}
 

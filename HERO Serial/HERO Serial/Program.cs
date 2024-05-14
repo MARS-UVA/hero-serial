@@ -4,6 +4,7 @@ using CTRE.Phoenix.Sensors;
 using CTRE.Phoenix;
 using Microsoft.SPOT;
 using Microsoft.SPOT.Hardware;
+using System.Diagnostics;
 using System.Threading;
 
 namespace HERO_Serial
@@ -29,7 +30,7 @@ namespace HERO_Serial
 
             // GPIO input port for reading signal from switch: port 3 pin 5 (middle right port on HERO Hat)
             // switch: toggling near blue wire is production drive, orange wire side is direct drive
-            InputPort digitalIn1 = new InputPort(CTRE.HERO.IO.Port3.Pin5, false, Port.ResistorMode.Disabled);
+            InputPort digitalIn1 = new InputPort(CTRE.HERO.IO.Port3.Pin6, false, Port.ResistorMode.Disabled);
 
             // GPIO output port for turning on LED: 3 pin 9(top right port on HERO Hat)
             // LED is on for test drive, off for production drive
@@ -56,8 +57,8 @@ namespace HERO_Serial
                 }
                 else
                 {
-                    deposit.IRServoDirectControl(270);
-                    deposit.WebcamServoDirectControl(0);
+                    //deposit.IRServoDirectControl(270);
+                    //deposit.WebcamServoDirectControl(0);
 
                     //digitalOut1.Write(false); // turn LED off
 

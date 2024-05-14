@@ -31,7 +31,7 @@ namespace HERO_Serial
             // 2 bucket ladder angles
             // 2 limit switches
             // 13 floats + 2 bytes = 54 bytes
-            dataOut = new byte[28]; // TODO: this probably needs to be something else
+            dataOut = new byte[48]; // TODO: this probably needs to be something else
             pdp = new PowerDistributionPanel((int)Constants.CANID.PDP_ID);
         }
 
@@ -55,8 +55,12 @@ namespace HERO_Serial
                 float driveForwards = (float) System.Math.Pow(gamepad.GetRightY(), 3.0f); // motor control is now a cubic function of joystick input
                 float driveTurn = (float)System.Math.Pow(gamepad.GetRightX(), 3.0f);
 
+
+                float[] driveTrainCurrents = drivetrain.GetCurrents(pdp);
                 // Pass it to the drivetrain
                 drivetrain.DirectDrive(driveForwards, driveTurn, 1.0f);
+           
+
 
                 // Get input for the bucket ladder
                 float bucketHeight = gamepad.GetLeftY();
@@ -424,6 +428,8 @@ namespace HERO_Serial
             Utils.EncodeFloatToByteArray(BucketLadder.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 16);
             // 24th to 27th bytes is the current reading from the construction bin actuator
             Utils.EncodeFloatToByteArray(DepositSystem.getInstance().GetCurrents(pdp)).CopyTo(dataOut, 24);
+            // 28th to 47th bytes are the average currents
+            Utils.EncodeFloatToByteArray(Drivetrain.getInstance().GetAvgCurrents()).CopyTo(dataOut, 28);
 
             //Debug.Print("DEPOSIT BIN RAISED: " + dataOut[52] + ", BUCKET LADDER LOWERED: " + dataOut[53]);
             // Keeping this...

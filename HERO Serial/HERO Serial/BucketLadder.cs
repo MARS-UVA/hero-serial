@@ -65,7 +65,7 @@ public class BucketLadder
         currents[1] = pdp.GetChannelCurrent(4); // chain
         //currents[2] = pdp.GetChannelCurrent(1); // bucket ladder right
 
-        Debug.Print("Bucket ladder current: " + currents[0]);
+        //Debug.Print("Bucket ladder current: " + currents[0]);
 
         if (currents[0] > 60 || currents[1] > 100) // stop everything if current exceeds 60A.
         {
