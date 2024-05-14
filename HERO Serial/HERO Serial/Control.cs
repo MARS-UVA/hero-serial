@@ -401,6 +401,8 @@ namespace HERO_Serial
         // get motor currents, arm angle, and arm translation and put into dataOut
         public void GetStatus()
         {
+            //Debug.Print("sending feedback");
+
             /*
              * Here's how this works: 
              * 1. Each talon's current is converted from a 4 byte float by taking the 

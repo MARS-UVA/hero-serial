@@ -103,7 +103,8 @@ public class Drivetrain
 		currents[2] = pdp.GetChannelCurrent(2); // back left
 		currents[3] = pdp.GetChannelCurrent(3); // back right
 
-		currents[0] = 50f;
+		//currents[0] = 10f;
+		//currents[1] = 20f;
 
 		float bucketladderCurrent = pdp.GetChannelCurrent(4);
 
@@ -164,7 +165,6 @@ public class Drivetrain
 			BLSum = 0;
 			prevBLCurrents = new float[arrayLen];
 
-
 		}
 
 		return currents;
@@ -172,8 +172,8 @@ public class Drivetrain
 
 	public float[] GetAvgCurrents()
     {
-		float [] avgCurrents = new float[] { 100f, 100f, W3Sum, W4Sum, BLSum };
-		Debug.Print(avgCurrents);
+		float [] avgCurrents = new float[] { W1Sum / arrayLen, W2Sum / arrayLen, W3Sum / arrayLen, W4Sum / arrayLen, BLSum / arrayLen};
+		// Debug.Print(avgCurrents[0].ToString());
 		return avgCurrents;
     }
 

@@ -73,6 +73,8 @@ namespace HERO_Serial
                     //{
                     //    Debug.Print("Byte " + i + ": " + control.dataOut[i]);
                     //}
+
+                    Debug.Print(control.dataOut[31].ToString());
                     serial.SendBytes(control.dataOut);
                 }
             }
