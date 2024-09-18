@@ -6,6 +6,7 @@ using CTRE.Phoenix;
 using HERO_Serial;
 using Microsoft.SPOT.Hardware;
 using Microsoft.SPOT;
+using System.Threading;
 
 /**
  * This is a class to represent the BucketLadder subsystem
@@ -26,6 +27,12 @@ public class BucketLadder
     // static readonly AnalogInput pot1 = new AnalogInput(CTRE.HERO.IO.Port8.Analog_Pin4);
     static readonly InputPort loweredSwitch = new InputPort(CTRE.HERO.IO.Port6.Pin3, false, Port.ResistorMode.Disabled);
 
+    private int arrayLen = 200;
+    private int currentIter;
+    private float[] prevBLCurrents;
+    private float BLSum = 0;
+    private int maxCurrent = 70;
+
 
     private BucketLadder()
     {
@@ -41,6 +48,8 @@ public class BucketLadder
         enable = true;
         ladderLifter0.ConfigSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         ladderLifter1.ConfigSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+
+        prevBLCurrents = new float[arrayLen];
     }
 
     public static BucketLadder getInstance()
@@ -63,13 +72,30 @@ public class BucketLadder
         // change argument to PDP channel number instead of CAN ID
         currents[0] = pdp.GetChannelCurrent(15); // bucket ladder left
         currents[1] = pdp.GetChannelCurrent(4); // chain
-        //currents[2] = pdp.GetChannelCurrent(1); // bucket ladder right
+
+        Debug.Print("Current bucket ladder" + currents[1].ToString());
+                                                //currents[2] = pdp.GetChannelCurrent(1); // bucket ladder right
 
         //Debug.Print("Bucket ladder current: " + currents[0]);
 
-        if (currents[0] > 60 || currents[1] > 100) // stop everything if current exceeds 60A.
+        currentIter += 1;
+        if (currentIter == arrayLen)
+        {
+            currentIter = 0;
+        }
+
+        BLSum += (currents[1] - prevBLCurrents[currentIter]);
+        prevBLCurrents[currentIter] = currents[1];
+
+        if (BLSum > maxCurrent * arrayLen) // stop bucket ladder for 2s if its current exceeds max current
         {
             Stop();
+            Debug.Print("STOPPING");
+            Thread.Sleep(2000);
+            enable = true;
+
+            BLSum = 0;
+            prevBLCurrents = new float[arrayLen];
         }
 
         return currents;

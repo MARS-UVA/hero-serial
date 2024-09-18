@@ -29,7 +29,7 @@ public class Drivetrain
 	private float[] prevW3Currents;
 	private float[] prevW4Currents;
 
-	private int arrayLen = 20;
+	private int arrayLen = 200;
 	private int currentIter;
 	private float W1Sum = 0;
 	private float W2Sum = 0;
