@@ -16,12 +16,6 @@ namespace HERO_Serial
         
         public readonly byte[] dataOut; // data sent back to Jetson, used to send motor current readings
 
-        //public Control(TalonSRX[] talons)
-        //{
-        //    this.talons = talons;
-        //    dataOut = new byte[talons.Length + 8];
-        //}
-
         public Control()
         {
             // 4 drivetrain currents
@@ -42,8 +36,6 @@ namespace HERO_Serial
 
             if (gamepad.IsConnected())
             {
-                //Debug.Print("gamepad connected");
-
                 // Get the subsystems
                 var drivetrain = Drivetrain.getInstance();
                 var bucketladder = BucketLadder.getInstance();
@@ -61,24 +53,17 @@ namespace HERO_Serial
                 drivetrain.DirectDrive(driveForwards, driveTurn, 1.0f);
            
 
-
                 // Get input for the bucket ladder
                 float bucketHeight = gamepad.GetLeftY();
                 float bucketExtension = gamepad.GetLeftX(); // not used right now
-                //float bucketChain = -0.5f * (gamepad.GetRightTrigger() + 1.0f) + 0.5f * (gamepad.GetLeftTrigger() + 1.0f);
 
                 // temporary code Austen added for POL. Rotates bucket ladder based on analog input values from left and right triggers
                 float bucketChain = gamepad.GetRightTrigger() + (gamepad.GetLeftTrigger() *  -1.0f);
-
-                //Debug.Print("Left Y: " + bucketHeight.ToString());
-                //Debug.Print("Left X: " + bucketExtension.ToString());
-                //Debug.Print("Chain: " + bucketChain.ToString());
 
                 // Pass to the bucket ladder subsystem
                 bucketladder.HeightDirectControl(bucketHeight, 1.0f);
                 bucketladder.ExtendDirectControl(bucketExtension, 1.0f); // not used
                 bucketladder.ChainDirectControl(bucketChain, 1.0f);
-                //bucketladder.GetCurrents(pdp);
 
                 // Get input for construction bin actuator (used to be called basket)
                 // Y lifts the basket, A lowers it
@@ -286,123 +271,12 @@ namespace HERO_Serial
                 // Removes this command from the ringbuffer
                 decoded.RemoveFront(count + 1); // remove count and data bytes
             }
-
-            /* Keeping for reference. TODO: Remove once done
-            while (decoded.size > 0)
-            {
-                int count = decoded[0] & 0x3F; // length prefixed
-                if (count == talons.Length) // if the message conveys direct motor output (1 value for each motor)
-                {
-                    for (int j = 0; j < count; j++) //sets each motor's percent output accordingly
-                    {
-                        float val = decoded[j + 1];
-                        val = (val - 100) / 100;
-                        talons[j].Set(ControlMode.PercentOutput, val);
-                    }
-                }
-                else if (count == 3 * 4) // if message length is 12 bytes (3 floats), we must update the linear and angular velocity of the robot itself
-                {
-
-                    for (int j = 1; j < 13; j += 4) //stores the three values at indices 1, 5, and 9
-                        temp[j] = decoded[j];
-
-                    for (int j = 0; j < 3; j++)
-                        twist[j] = BitConverter.ToSingle(temp, j * 4 + 1); //converts each value (linear vel x, linear vel y, angular vel about z) into a float. +1 added to fix the indices
-
-                    // TODO:
-                    // Adjust PID control to reflect pidgeon imu values and proper motors
-
-                    //find differences b/w current and target values:
-                    float currentAngularVel = (float)pot1.Read(); //WHERE WE READ THE VALUE FROM WILL CHANGE --> TODO: figure out how to read pidgeon imu values
-                    float angularVelDiff = twist[2] - currentAngularVel; //twist 2 contains the target angular velocity
-
-
-                    //keep moving the motor in the correct direction until the current velocities match the target values (within a small uncertainty)
-                    //using a magnitude and direction approach: the robot's heading is first updated, and then once it's  facing the right diretion, it travels with the target velocity
-
-                    // FIXME
-                    float angularAccDiff = 0.0f;
-                    float angleNow = 0.0f;
-                    float angleTarget = 0.0f;
-                    float linearXDiff = 0.0f;
-                    float angleDiff = 0.0f;
-                    //update heading
-                    while (System.Math.Abs(angularAccDiff) > 10)
-                    {
-                        //to spin around z axis without translational motion, spin left wheels forward and right wheels backward with same magnitude of motor output
-                        talons[0].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff)); //Math.Sign accounts for the direction, the Math.Max term sets the percent output magnitude with a minimun of 15%?
-                        talons[1].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff));
-                        talons[2].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * -1 * System.Math.Sign(angleDiff)); //factor of -1 changes the direction the motor spins
-                        talons[3].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * -1 * System.Math.Sign(angleDiff));
-                        currentAngularVel = (float)pot1.Read(); //TODO: update read in from pidgeon imu
-                        angularVelDiff = twist[2] - currentAngularVel;
-                    }
-                    //update translational motion
-                    
-                    float currentLinearMag = (float)pot1.Read(); //gets a value for velocity from the pidgeon IMU (TODO)
-                    float targetLinearMag = 0.0f; // FIXME // CTRE.Phoenix.Math.Sqrt(Math.Pow(twist[0], 2) + Math.Pow(twist[1], 2)); //magnitude of targe linear velocity (twist[0] is x component and twist[1] is y component)
-                    float linearDiff = targetLinearMag - currentLinearMag;
-                    while (System.Math.Abs(linearXDiff) > 10)
-                    {
-                        //talons 0 and 1 control left motor
-                        //talons 2 and 3 control right motor
-
-                        //send the robot forward:
-                        for (int ind = 0; ind < 4; ind++) {
-                        talons[ind].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(currentLinearMag / targetLinearMag)) * System.Math.Sign(linearDiff)); //Math.Sign accounts for the direction, the Math.Max term sets the percent output magnitude with a minimun of 15%?
-                        }
-                        currentLinearMag = (float)pot1.Read(); //TODO: update read in from pidgeon imu
-                        linearDiff = targetLinearMag - currentLinearMag;
-                    }
-
-
-                    // set arms and actuators to zero when in autonomy
-                    for (int j = 4; j < 8; j++)
-                        talons[j].Set(ControlMode.PercentOutput, 0.0f);
-                }
-                else if (count == 8) // if message length is 8 bytes (2 floats), we must update arm angle and translation
-                {
-                    for (int j = 1; j < 9; j += 4) //stores two values in temp at indices 1 and 5
-                        temp[j] = decoded[j];
-
-                    //retrieves the two stored values
-                    float angleTarget = BitConverter.ToSingle(temp, 1);
-                    float translationTarget = BitConverter.ToSingle(temp, 5);
-
-                    //find difference b/w current and target angle
-                    float angleNow = (float)pot1.Read();
-                    float angleDiff = angleTarget - angleNow;
-
-                    //keep moving the motor in the correct direction until the angle difference is small enough
-                    while (System.Math.Abs(angleDiff) < 10) //shouldn't this be > 10? 
-                    {
-                        talons[4].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(angleNow / angleTarget)) * System.Math.Sign(angleDiff)); //Math.Sign accounts for the direction, the Math.Max term sets the percent output magnitude with a minimun of 15%?
-                        angleNow = (float)pot1.Read();
-                        angleDiff = angleTarget - angleNow;
-                    }
-
-                    //find difference b/w current and target translation value
-                    float translationNow = (float)pot2.Read();
-                    float translationDiff = translationTarget - translationNow;
-                    //keep moving the motor in the correct direction until the angle difference is small enough
-                    while (System.Math.Abs(translationDiff) < 10)
-                    {
-                        talons[5].Set(ControlMode.PercentOutput, System.Math.Max(15, System.Math.Abs(translationNow / translationTarget)) * System.Math.Sign(translationDiff));
-                        translationNow = (float)pot2.Read();
-                        translationDiff = translationTarget - translationNow;
-                    }
-                }
-                decoded.RemoveFront(count + 1); // remove count and data bytes
-            }
-            */
             CTRE.Phoenix.Watchdog.Feed();
         }
 
         // get motor currents, arm angle, and arm translation and put into dataOut
         public void GetStatus()
         {
-            //Debug.Print("sending feedback");
-
             /*
              * Here's how this works: 
              * 1. Each talon's current is converted from a 4 byte float by taking the 
