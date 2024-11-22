@@ -14,42 +14,33 @@ using Microsoft.SPOT;
  * This is a singleton, and can be referenced anywhere
  */
 public class Drivetrain
-{ 
+{
 	private static Drivetrain instance;
-	private readonly TalonSRX leftLeader;
-	private readonly TalonSRX leftFollower;
-	private readonly TalonSRX rightLeader;
-	private readonly TalonSRX rightFollower;
-	private bool enable;
-	private float prevLeftPower;
-	private float prevRightPower;
 
-	private float[] prevW1Currents;
-	private float[] prevW2Currents;
-	private float[] prevW3Currents;
-	private float[] prevW4Currents;
+	// Motor controllers for the drivetrain (two per side: leader and follower).
+	private readonly TalonSRX leftLeader, leftFollower, rightFollower, rightLeader;
+
+	// Control flags and variables.
+	private bool enable; // Flag to enable or disable
+	private float prevLeftPower, prevRightPower; // Store previous power levels
+
 
 	private int arrayLen = 200;
-	private int currentIter;
-	private float W1Sum = 0;
-	private float W2Sum = 0;
-	private float W3Sum = 0;
-	private float W4Sum = 0;
-	private int maxCurrent = 80;
+	private float[] prevW1Currents, prevW2Currents, prevW3Currents, prevW4Currents;
+
+	// Sums of currents for each motor 
+	private float W1Sum = 0, W2Sum = 0, W3Sum = 0, W4Sum = 0;
+
+
+	private int currentIter = 0, maxCurrent = 80, maxTotalCurrent = 130;
 
 	private float[] prevBLCurrents;
 	private float BLSum = 0;
-	private int maxTotalCurrent = 130;
+
 
 
 	private Drivetrain()
 	{
-		// This is a singleton
-		// All the talons for the drivetrain live here
-		// Have an init, then several drive functions
-		// All the talons on one side will follow a leader talon
-		
-		// Initalize all the Talons
 		leftLeader = new TalonSRX((int)Constants.CANID.DRIVETRAIN_FRONT_LEFT_TALON_ID);
 		leftFollower = new TalonSRX((int)Constants.CANID.DRIVETRAIN_BACK_LEFT_TALON_ID);
 		rightLeader = new TalonSRX((int)Constants.CANID.DRIVETRAIN_FRONT_RIGHT_TALON_ID);
@@ -60,6 +51,19 @@ public class Drivetrain
 		leftFollower.Follow(leftLeader);
 		rightFollower.Follow(rightLeader);
 
+		ConfigureTalons();
+		InitializeBuffers();
+
+		enable = true;
+
+	}
+	// This is a singleton
+	// All the talons for the drivetrain live here
+	// Have an init, then several drive functions
+	// All the talons on one side will follow a leader talon
+
+
+	private void ConfigureTalons() {
 		// TODO: Add settings, current limits, etc. 
 		leftLeader.SetInverted(true);
 		leftFollower.SetInverted(true);
@@ -76,8 +80,10 @@ public class Drivetrain
 		rightLeader.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
 		leftFollower.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
 		rightFollower.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
-
-		enable = true;
+	}
+		
+	private void InitializeBuffers()
+	{ 
 		//notStallStartTime = 0;
 		prevW1Currents = new float[arrayLen];
 		prevW2Currents = new float[arrayLen];
@@ -97,6 +103,7 @@ public class Drivetrain
 
 	public float[] GetCurrents(PowerDistributionPanel pdp)
     {
+		// Initialize an array to store current readings for four motors (front left, front right, back left, back right).
 		float[] currents = new float[4];
 		currents[0] = pdp.GetChannelCurrent(12); // front left
 		currents[1] = pdp.GetChannelCurrent(13); // front right
@@ -106,13 +113,19 @@ public class Drivetrain
 		//currents[0] = 10f;
 		//currents[1] = 20f;
 
+		// Retrieve the current reading for an auxiliary component
 		float bucketladderCurrent = pdp.GetChannelCurrent(4);
 
 		currentIter += 1;
 		if (currentIter == arrayLen)
         {
-			currentIter = 0;
-        }
+			currentIter = 0; // Reset
+		}
+
+
+		// Update cumulative sums for current differences and store the current values
+		// in the corresponding historical buffers. These sums might be used for
+		// monitoring or control calculations.
 
 		W1Sum += (currents[0] - prevW1Currents[currentIter]);
 		W2Sum += (currents[1] - prevW2Currents[currentIter]);
