@@ -52,6 +52,7 @@ namespace HERO_Serial
                      * A - Lowers construction bin
                      * Right stick should move the drivetrain
                      */
+                    Debug.Print("");
                     control.DirectUserControl(); // Direct control function
                     Thread.Sleep(10);
                 }

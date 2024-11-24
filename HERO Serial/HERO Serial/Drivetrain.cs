@@ -92,6 +92,7 @@ public class Drivetrain
 
 	public float[] GetCurrents(PowerDistributionPanel pdp)
 	{
+		//read the currents for the four motors from the power distribution panel 
 		float[] currents = new float[4];
 		currents[0] = pdp.GetChannelCurrent(12); // front left
 		currents[1] = pdp.GetChannelCurrent(13); // front right
@@ -108,16 +109,19 @@ public class Drivetrain
 		{
 			currentIter = 0;
 		}
-
+		// Update the sums for each wheel and store the current in the history buffer
 		W1Sum += (currents[0] - prevW1Currents[currentIter]);
 		W2Sum += (currents[1] - prevW2Currents[currentIter]);
 		W3Sum += (currents[2] - prevW3Currents[currentIter]);
 		W4Sum += (currents[3] - prevW4Currents[currentIter]);
+
+		// Update the historical data for the current iteration
 		prevW1Currents[currentIter] = currents[0];
 		prevW2Currents[currentIter] = currents[1];
 		prevW3Currents[currentIter] = currents[2];
 		prevW4Currents[currentIter] = currents[3];
 
+		// Update the sum for the bucket ladder and store the current in the history buffer
 		BLSum += (bucketladderCurrent - prevBLCurrents[currentIter]);
 		prevBLCurrents[currentIter] = bucketladderCurrent;
 
@@ -125,12 +129,14 @@ public class Drivetrain
 		if (W1Sum > maxCurrent * arrayLen || W2Sum > maxCurrent * arrayLen || W3Sum > maxCurrent * arrayLen || W4Sum > maxCurrent * arrayLen)
 		{
 			// stop everything, and wait for 2 seconds to reset
+			// Stop the robot and log the event
 			Stop();
 			Debug.Print("STOPPING");
 			Thread.Sleep(2000);
 			enable = true;
 
 			// reset sum values
+			// Reset all rolling sums to zero
 			W1Sum = 0;
 			W2Sum = 0;
 			W3Sum = 0;
