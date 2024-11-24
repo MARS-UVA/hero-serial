@@ -37,10 +37,14 @@ public class Drivetrain
 	private float[] prevBLCurrents;
 	private float BLSum = 0;
 
-
-
 	private Drivetrain()
 	{
+		// This is a singleton
+		// All the talons for the drivetrain live here
+		// Have an init, then several drive functions
+		// All the talons on one side will follow a leader talon
+
+		// Initalize all the Talons
 		leftLeader = new TalonSRX((int)Constants.CANID.DRIVETRAIN_FRONT_LEFT_TALON_ID);
 		leftFollower = new TalonSRX((int)Constants.CANID.DRIVETRAIN_BACK_LEFT_TALON_ID);
 		rightLeader = new TalonSRX((int)Constants.CANID.DRIVETRAIN_FRONT_RIGHT_TALON_ID);
@@ -51,39 +55,13 @@ public class Drivetrain
 		leftFollower.Follow(leftLeader);
 		rightFollower.Follow(rightLeader);
 
-		ConfigureTalons();
-		InitializeBuffers();
+		// Configure a specific motor's inverse, brake mode, seconds from neutral to full output in drivetrain
+		this.configureMotor(leftLeader, true, NeutralMode.Brake, 5f);
+		this.configureMotor(leftFollower, true, NeutralMode.Brake, 5f);
+		this.configureMotor(rightLeader, false, NeutralMode.Brake, 5f);
+		this.configureMotor(rightFollower, false, NeutralMode.Brake, 5f);
 
 		enable = true;
-
-	}
-	// This is a singleton
-	// All the talons for the drivetrain live here
-	// Have an init, then several drive functions
-	// All the talons on one side will follow a leader talon
-
-
-	private void ConfigureTalons() {
-		// TODO: Add settings, current limits, etc. 
-		leftLeader.SetInverted(true);
-		leftFollower.SetInverted(true);
-		rightLeader.SetInverted(false);
-		rightFollower.SetInverted(false);
-
-		// Put in brake mode
-		leftLeader.SetNeutralMode(NeutralMode.Brake);
-		rightLeader.SetNeutralMode(NeutralMode.Brake);
-		leftFollower.SetNeutralMode(NeutralMode.Brake);
-		rightFollower.SetNeutralMode(NeutralMode.Brake);
-
-		leftLeader.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
-		rightLeader.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
-		leftFollower.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
-		rightFollower.ConfigOpenloopRamp(5f); // 0.5 seconds from neutral to full output (during open-loop control)
-	}
-		
-	private void InitializeBuffers()
-	{ 
 		//notStallStartTime = 0;
 		prevW1Currents = new float[arrayLen];
 		prevW2Currents = new float[arrayLen];
@@ -92,18 +70,28 @@ public class Drivetrain
 		prevBLCurrents = new float[arrayLen];
 	}
 
+	public void configureMotor(TalonSRX talonMotor, bool inverted, NeutralMode neutralMode, float secondsFromNeutralToFull)
+	{
+		// Set inverted
+		talonMotor.SetInverted(inverted);
+		// Used to put motors in brake mode
+		talonMotor.SetNeutralMode(neutralMode);
+		// ____ seconds from neutral to full output (during open-loop control)
+		talonMotor.ConfigOpenloopRamp(secondsFromNeutralToFull);
+	}
+
 	public static Drivetrain getInstance()
-    {
-		if (instance == null){
+	{
+		if (instance == null)
+		{
 			instance = new Drivetrain();
-        }
+		}
 
 		return instance;
-    }
+	}
 
 	public float[] GetCurrents(PowerDistributionPanel pdp)
-    {
-		// Initialize an array to store current readings for four motors (front left, front right, back left, back right).
+	{
 		float[] currents = new float[4];
 		currents[0] = pdp.GetChannelCurrent(12); // front left
 		currents[1] = pdp.GetChannelCurrent(13); // front right
@@ -113,19 +101,13 @@ public class Drivetrain
 		//currents[0] = 10f;
 		//currents[1] = 20f;
 
-		// Retrieve the current reading for an auxiliary component
 		float bucketladderCurrent = pdp.GetChannelCurrent(4);
 
 		currentIter += 1;
 		if (currentIter == arrayLen)
-        {
-			currentIter = 0; // Reset
+		{
+			currentIter = 0;
 		}
-
-
-		// Update cumulative sums for current differences and store the current values
-		// in the corresponding historical buffers. These sums might be used for
-		// monitoring or control calculations.
 
 		W1Sum += (currents[0] - prevW1Currents[currentIter]);
 		W2Sum += (currents[1] - prevW2Currents[currentIter]);
@@ -181,14 +163,14 @@ public class Drivetrain
 		}
 
 		return currents;
-    }
+	}
 
 	public float[] GetAvgCurrents()
-    {
-		float [] avgCurrents = new float[] { W1Sum / arrayLen, W2Sum / arrayLen, W3Sum / arrayLen, W4Sum / arrayLen, BLSum / arrayLen};
+	{
+		float[] avgCurrents = new float[] { W1Sum / arrayLen, W2Sum / arrayLen, W3Sum / arrayLen, W4Sum / arrayLen, BLSum / arrayLen };
 		// Debug.Print(avgCurrents[0].ToString());
 		return avgCurrents;
-    }
+	}
 
 	// Quick function to stop all the motors
 	public void Stop()
@@ -207,7 +189,7 @@ public class Drivetrain
 	// and a turn (1 is turn clockwise, -1 turn counter-clockwise)
 	// Designed such that controller input can be passed directly to this function
 	public void DirectDrive(float forward, float turn, float upperBound)
-    {
+	{
 		DirectDriveLeft(forward + turn, upperBound);
 		DirectDriveRight(forward - turn, upperBound);
 		//leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(forward + turn, upperBound));
@@ -215,23 +197,24 @@ public class Drivetrain
 	}
 
 	public void DirectDriveLeft(float power, float upperBound)
-    {
+	{
 		if (System.Math.Abs(power) < System.Math.Abs(prevLeftPower)) // when decelerating, ramp down speed immediately (within 0.1s)
-        {
+		{
 			leftLeader.ConfigOpenloopRamp(0.1f);
 			leftFollower.ConfigOpenloopRamp(0.1f);
 		}
 		else if (System.Math.Abs(power) > System.Math.Abs(prevLeftPower)) // when accelerating, ramp up speed gradually (0.5s)
-        {
+		{
 			leftLeader.ConfigOpenloopRamp(0.5f);
 			leftFollower.ConfigOpenloopRamp(0.5f);
 		}
-		if (enable) {
+		if (enable)
+		{
 			leftLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
 			prevLeftPower = power;
 		}
-		
-    }
+
+	}
 
 	public void DirectDriveRight(float power, float upperBound)
 	{
@@ -246,10 +229,10 @@ public class Drivetrain
 			rightFollower.ConfigOpenloopRamp(0.5f);
 		}
 		if (enable)
-        {
+		{
 			rightLeader.Set(ControlMode.PercentOutput, Utils.thresh(power, upperBound));
 			prevRightPower = power;
 		}
-		
+
 	}
 }
